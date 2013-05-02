@@ -19,7 +19,7 @@ import java.util.logging.Level;
  */
 public class Items{
 
-	private IBattle plugin;
+	private IBattle plugin = IBattle.getPlugin();
 	private YamlConfiguration items;
 	private HashMap<ItemID, String> itemsByID = new HashMap<ItemID, String>();
 	private HashMap<String, ItemID> itemsByName = new HashMap<String, ItemID>();
@@ -37,8 +37,7 @@ public class Items{
 		return types;
 	}
 
-	public Items(IBattle plugin){
-		this.plugin = plugin;
+	public Items(){
 		File itemsFile = new File(plugin.getDataFolder(), "items.yml");
 		if(!itemsFile.exists()){
 			Util.debug(Level.INFO, "Extracting new items.yml file...");

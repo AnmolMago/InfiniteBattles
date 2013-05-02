@@ -15,4 +15,5 @@ public class IError{
 	public static final String invalidBattleType = "This is an invalid battletype! Please choose from: " + Util.getBattleTypes();
 	public static final String outOfArenas = "No arenas are available for this battletype! Please try again later!";
 	public static final String alreadyInBattle = "You are already fighting in a battle!";
+	public static final String invalidContestant = "This is an invalid contestant!";
 }

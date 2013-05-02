@@ -91,9 +91,13 @@ public class Contestant{
 		}
 	}
 
+	public HashMap<BattleType, Integer> getCount(){
+		return count;
+	}
+
 	public Player getPlayer(){
-		if(Bukkit.getPlayerExact(name) == null){
-			IBattle.isPlayerPlaying(name).removeContestant(this);
+		if(Bukkit.getPlayerExact(name) == null && (IBattle.isPlayerPlaying(name) != null)){
+				IBattle.isPlayerPlaying(name).removeContestant(this);
 		}
 		return Bukkit.getPlayerExact(name);
 	}

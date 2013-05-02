@@ -23,7 +23,9 @@ public class CommandManager{
 			}
 		}
 		if(exec != null){
-			Util.error(sender, exec.execute(sender, args));
+			String s = exec.execute(sender, args);
+			if(s != null)
+				Util.error(sender, s);
 		}else{
 			Util.error(sender, IError.invalidCommand);
 		}
@@ -31,8 +33,9 @@ public class CommandManager{
 
 	public enum Commands{
 
-		battle("ibattle", new BattleCommand(), new String[]{"", "d"}),
-		join("join", new JoinCommand(), new String[]{"", "d"});
+		battle("ibattle", new BattleCommand(), new String[]{"infinitebattle", "infinitebattles"}),
+		join("join", new JoinCommand(), new String[]{""}),
+		contestant("states", new ContestantCommand(), new String[]{"contestant"});
 
 		String cmd;
 		ICommand exec;

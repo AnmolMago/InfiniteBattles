@@ -7,10 +7,15 @@ import net.ArtificialCraft.InfiniteBattles.Entities.Battles.Battle;
  * Author: Josh Aurora
  * Date: 2013-04-29
  */
-public class Standard extends IBattleHandler{
+public class FreeForAll extends IBattleHandler{
 
-	public Standard(Battle b){
+	public FreeForAll(Battle b){
 		super(b);
+	}
+
+	@Override
+	public void load(){
+
 	}
 
 }

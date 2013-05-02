@@ -10,12 +10,11 @@ public enum BattleType{
 	Capture_The_Flag(3),
 	PaintBall(4),//done
 	Spleef(1),//done
-	Halo(5),
 	One_Hit_Ko(4),//done
 	Pick_Inv(2),
-	STANDARD(2),//done
+	Free_For_All(2),//done
 	Role_Play(3),
-	Team_Role_Play(3);
+	InvPick(3);
 
 	public int lives = 1;
 

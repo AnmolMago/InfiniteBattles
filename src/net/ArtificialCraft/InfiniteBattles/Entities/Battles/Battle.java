@@ -11,6 +11,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.Team;
 import uk.co.tggl.pluckerpluck.multiinv.MultiInvAPI;
 import uk.co.tggl.pluckerpluck.multiinv.inventory.MIInventory;
 
@@ -18,7 +19,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
 
 /**
@@ -85,7 +85,6 @@ public class Battle{
 	}
 
 	public void start(){
-		Util.broadcast(ChatColor.DARK_RED + "The battle " + ChatColor.DARK_AQUA + name + ChatColor.DARK_RED + " has started, you may type " + ChatColor.DARK_AQUA + "\"/spectate Battle1\"" + ChatColor.DARK_RED + " to watch the battle!");
 		handler = IBattle.getBattleHandler(bt, this);
 		scoreboard = ScoreboardHandler.getNewScoreBoard();
 		for(Contestant c : contestants){
@@ -93,11 +92,8 @@ public class Battle{
 			locations.put(c, p.getLocation());
 			inventories.put(c, miapi.getPlayerInventory(c.getName(), p.getWorld().getName(), GameMode.SURVIVAL));
 		}
-		if(bt.equals(BattleType.Pick_Inv)){
-
-		}else if(bt.equals(BattleType.Role_Play) || bt.equals(BattleType.Team_Role_Play)){
-
-		}
+		handler.load();
+		Util.broadcast(ChatColor.DARK_RED + "The battle " + ChatColor.DARK_AQUA + name + ChatColor.DARK_RED + " has started, you may type " + ChatColor.DARK_AQUA + "\"/spectate Battle1\"" + ChatColor.DARK_RED + " to watch the battle!");
 	}
 
 	public void end(String reason){
@@ -106,6 +102,10 @@ public class Battle{
 	}
 
 	public void end(Contestant c){
+		handler.unregisterHandler();
+	}
+
+	public void end(Team team){
 		handler.unregisterHandler();
 	}
 
@@ -125,28 +125,6 @@ public class Battle{
 
 	public boolean hasContestant(Contestant c){
 		return contestants.contains(c);
-	}
-
-	public void teleportUsersToArenaTeam(){   //make scoreboard teams too
-		for(Contestant c : contestants){
-			Player p = c.getPlayer();
-			if(p != null){
-
-			}else{
-				removeContestant(c);
-			}
-		}
-	}
-
-	public void teleportUsersToArena(){
-		for(Contestant c : contestants){
-			Player p = c.getPlayer();
-			if(p != null){
-				p.teleport(a.getSpawns().get(new Random().nextInt(a.getSpawns().size()-1)));
-			}else{
-				removeContestant(c);
-			}
-		}
 	}
 
 	public void warnUsers(String msg){

@@ -48,7 +48,7 @@ public class ArenaHandler{
 
 	public static Arena getArenaFor(BattleType bt){
 		List<Arena> arenas = new ArrayList<Arena>();
-		if(bt.equals(BattleType.SPLEEF)){// || bt.equals(BattleType.OTHERUNIQUETYPE)
+		if(bt.equals(BattleType.Spleef)){// || bt.equals(BattleType.OTHERUNIQUETYPE)
 			for(String key : unusedArenas.keySet()){
 				if(unusedArenas.get(key).isUnique().equals(bt))
 					arenas.add(unusedArenas.get(key));

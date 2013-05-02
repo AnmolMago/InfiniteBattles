@@ -1,7 +1,6 @@
 package net.ArtificialCraft.InfiniteBattles.Entities.Battles.BattleHandler;
 
 import net.ArtificialCraft.InfiniteBattles.Entities.Battles.Battle;
-import net.ArtificialCraft.InfiniteBattles.Entities.Battles.BattleType;
 import net.ArtificialCraft.InfiniteBattles.IBattle;
 import net.ArtificialCraft.InfiniteBattles.Misc.Formatter;
 import net.ArtificialCraft.InfiniteBattles.Misc.Util;
@@ -39,12 +38,13 @@ public class RolePlay extends IBattleHandler{
 
 	@EventHandler
 	public void onClick(PlayerInteractEvent e){
+		if(!isBattleEvent(e)){return;}
 		if(e.getAction().equals(Action.LEFT_CLICK_AIR) || e.getAction().equals(Action.RIGHT_CLICK_AIR) || IBattle.isPlayerPlaying(e.getPlayer().getName()) == null){
 			return;
 		}
 		if(e.getClickedBlock().getType().equals(Material.WALL_SIGN) || e.getClickedBlock().getType().equals(Material.SIGN) || e.getClickedBlock().getType().equals(Material.SIGN_POST)){
 			Sign s = (Sign)e.getClickedBlock().getState();
-			if(!s.getLine(0).equalsIgnoreCase("{Role}") && !s.getLine(0).equalsIgnoreCase("{FORCE START}")){
+			if(!s.getLine(0).equalsIgnoreCase("{Role}")){
 				return;
 			}
 			Player p = e.getPlayer();
@@ -54,16 +54,7 @@ public class RolePlay extends IBattleHandler{
 				for(String ch : chosen)
 					Util.msg(Bukkit.getPlayerExact(ch), ChatColor.RED + "We are waiting for " + (b.getContestants().size() - chosen.size()) + " more players!");
 			}
-			if(chosen.size() == b.getContestants().size() || s.getLine(0).equalsIgnoreCase("{FORCE START}")){
-				if(b.getTime() + 120000 > System.currentTimeMillis()){
-					if(b.getType().equals(BattleType.Team_Role_Play)){
-						b.teleportUsersToArenaTeam();
-					}else{
-						b.teleportUsersToArena();
-					}
-				}else{
-					Util.error(p, "You still have to wait " + Formatter.formatTimeSpan(System.currentTimeMillis() - (b.getTime() + 120000)) + " before you can force start!");
-				}
+			if(chosen.size() == b.getContestants().size()){
 			}
 		}
 	}

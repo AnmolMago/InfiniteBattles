@@ -13,5 +13,10 @@ public class PaintBall extends IBattleHandler{
 		super(b);
 	}
 
+	@Override
+	public void load(){
+
+	}
+
 
 }

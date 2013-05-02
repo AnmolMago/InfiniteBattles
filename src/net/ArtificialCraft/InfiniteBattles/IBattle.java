@@ -98,16 +98,16 @@ public class IBattle extends JavaPlugin{
 	}
 
 	public static void addContestant(Contestant c){
-		contestants.put(c.getName(), c);
+		contestants.put(c.getName().toLowerCase(), c);
 	}
 
 	public static boolean doesContestantExist(String c){
-		return contestants.containsKey(c);
+		return contestants.containsKey(c.toLowerCase());
 	}
 
 	public static Contestant getContestant(String s){
-		if(contestants.containsKey(s))
-			return contestants.get(s);
+		if(contestants.containsKey(s.toLowerCase()))
+			return contestants.get(s.toLowerCase());
 
 		return null;
 	}
@@ -122,20 +122,17 @@ public class IBattle extends JavaPlugin{
 				return new PaintBall(b);
 			case One_Hit_Ko:
 				return new OneHitKO(b);
-			case Halo:
-				return new Halo(b);
 			case Role_Play:
-			case Team_Role_Play:
 				return new RolePlay(b);
 			default:
-				return new Standard(b);
+				return new FreeForAll(b);
 		}
 	}
 
 	public static Battle isPlayerPlaying(String p){
-		if(currentBattles.get("Battle1") != null && currentBattles.get("Battle1").hasContestant(contestants.get(p))){
+		if(currentBattles.get("Battle1") != null && currentBattles.get("Battle1").hasContestant(contestants.get(p.toLowerCase()))){
 			return currentBattles.get("Battle1");
-		}else if(currentBattles.get("Battle2") != null && currentBattles.get("Battle2").hasContestant(contestants.get(p))){
+		}else if(currentBattles.get("Battle2") != null && currentBattles.get("Battle2").hasContestant(contestants.get(p.toLowerCase()))){
 			return currentBattles.get("Battle2");
 		}
 		return null;
