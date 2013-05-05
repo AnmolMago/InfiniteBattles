@@ -17,9 +17,7 @@ import uk.co.tggl.pluckerpluck.multiinv.inventory.MIInventory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Enclosed in project InfiniteBattles for Aurora Enterprise.
@@ -34,7 +32,7 @@ public class Battle{
 	Status status = Status.Joinable;
 	BattleType bt;
 	IBattleHandler handler;
-	Set<Contestant> contestants = new HashSet<Contestant>();
+	private List<Contestant> contestants = new ArrayList<Contestant>();
 	HashMap<Contestant, Location> locations = new HashMap<Contestant, Location>();
 	HashMap<Contestant, MIInventory> inventories = new HashMap<Contestant, MIInventory>();
 	Scoreboard scoreboard;
@@ -50,6 +48,10 @@ public class Battle{
 
 	public String getName(){
 		return name;
+	}
+
+	public IBattleHandler getHandler(){
+		return handler;
 	}
 
 	public String getCreator(){
@@ -84,13 +86,14 @@ public class Battle{
 		Util.broadcast(ChatColor.DARK_AQUA + name + ChatColor.DARK_RED + " {" + ChatColor.GOLD + bt.getName() + ChatColor.DARK_RED + "} is now accepting contestants! Please type " + ChatColor.DARK_AQUA + "\"/join " + name + "\"" + ChatColor.DARK_RED + " to join!");
 	}
 
-	public void start(){
+	public void setUp(){
 		handler = IBattle.getBattleHandler(bt, this);
 		scoreboard = ScoreboardHandler.getNewScoreBoard();
 		for(Contestant c : contestants){
 			Player p = c.getPlayer();
 			locations.put(c, p.getLocation());
 			inventories.put(c, miapi.getPlayerInventory(c.getName(), p.getWorld().getName(), GameMode.SURVIVAL));
+			p.teleport(a.getPitStop());
 		}
 		handler.load();
 		Util.broadcast(ChatColor.DARK_RED + "The battle " + ChatColor.DARK_AQUA + name + ChatColor.DARK_RED + " has started, you may type " + ChatColor.DARK_AQUA + "\"/spectate Battle1\"" + ChatColor.DARK_RED + " to watch the battle!");
@@ -110,17 +113,23 @@ public class Battle{
 	}
 
 	public boolean addContestant(Contestant c){
-		return contestants.add(c);
+		if(!contestants.contains(c))
+			return contestants.add(c);
+
+		return false;
 	}
 
 	public void removeContestant(Contestant c){
 		contestants.remove(c);
 		locations.remove(c);
 		inventories.remove(c);
+		if(contestants.size() == 1){
+			end(contestants.get(0));
+		}
 	}
 
 	public List<Contestant> getContestants(){
-		return new ArrayList<Contestant>(locations.keySet());
+		return contestants;
 	}
 
 	public boolean hasContestant(Contestant c){

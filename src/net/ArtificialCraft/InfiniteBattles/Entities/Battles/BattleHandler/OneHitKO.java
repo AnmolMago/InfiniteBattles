@@ -24,6 +24,11 @@ public class OneHitKO extends IBattleHandler{
 
 	}
 
+	@Override
+	public void start(){
+
+	}
+
 	@EventHandler
 	public void onDamage(EntityDamageByEntityEvent e){
 		if(!isBattleEvent(e)){return;}

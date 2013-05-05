@@ -37,6 +37,11 @@ public class InvPick extends IBattleHandler{
 
 	}
 
+	@Override
+	public void start(){
+
+	}
+
 	@EventHandler
 	public void onClick(PlayerInteractEvent e){
 		if(!isBattleEvent(e)){return;}

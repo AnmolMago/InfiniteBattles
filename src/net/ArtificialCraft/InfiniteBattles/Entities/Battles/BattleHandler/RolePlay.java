@@ -2,7 +2,6 @@ package net.ArtificialCraft.InfiniteBattles.Entities.Battles.BattleHandler;
 
 import net.ArtificialCraft.InfiniteBattles.Entities.Battles.Battle;
 import net.ArtificialCraft.InfiniteBattles.IBattle;
-import net.ArtificialCraft.InfiniteBattles.Misc.Formatter;
 import net.ArtificialCraft.InfiniteBattles.Misc.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -33,6 +32,11 @@ public class RolePlay extends IBattleHandler{
 
 	@Override
 	public void load(){
+
+	}
+
+	@Override
+	public void start(){
 
 	}
 

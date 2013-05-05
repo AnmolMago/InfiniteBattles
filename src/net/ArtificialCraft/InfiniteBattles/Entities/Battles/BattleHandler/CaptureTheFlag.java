@@ -7,6 +7,7 @@ import net.ArtificialCraft.InfiniteBattles.IBattle;
 import net.ArtificialCraft.InfiniteBattles.Misc.Formatter;
 import net.ArtificialCraft.InfiniteBattles.Misc.Util;
 import org.bukkit.Bukkit;
+import org.bukkit.Color;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -20,6 +21,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
@@ -56,17 +59,32 @@ public class CaptureTheFlag extends IBattleHandler{
 		blueTeam.setAllowFriendlyFire(false);
 		List<Contestant> teams = getBattle().getContestants();
 		int half = teams.size() / 2;
-		for(int i = 0; i < half; i++)
+		for(int i = 0; i <= half; i++)
 			redTeam.addPlayer(teams.remove(i).getPlayer());
 
 		for(Contestant c : teams)
 			blueTeam.addPlayer(c.getPlayer());
-
 	}
 
 	@Override
 	public void load(){
+		for(Contestant c : getBattle().getContestants()){
+			Player p = c.getPlayer();
+			if(p == null){continue;}
+			PlayerInventory inv = p.getInventory();
+			inv.clear();
+			Color teamColor = board.getPlayerTeam(c.getPlayer()).getName().equalsIgnoreCase("redTeam") ? Color.RED : Color.BLUE;
+			inv.setHelmet(colorrize(new ItemStack(Material.LEATHER_HELMET), teamColor));
+			inv.setChestplate(colorrize(new ItemStack(Material.LEATHER_CHESTPLATE), teamColor));
+			inv.setLeggings(colorrize(new ItemStack(Material.LEATHER_LEGGINGS), teamColor));
+			inv.setBoots(colorrize(new ItemStack(Material.LEATHER_BOOTS), teamColor));
+			p.updateInventory();
+			p.setScoreboard(board);
+		}
+	}
 
+	@Override
+	public void start(){
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
@@ -172,6 +190,13 @@ public class CaptureTheFlag extends IBattleHandler{
 			}
 		}
 		getBattle().end(t);
+	}
+
+	public ItemStack colorrize(ItemStack item, Color color) {
+		LeatherArmorMeta meta = (LeatherArmorMeta)item.getItemMeta();
+		meta.setColor(color);
+		item.setItemMeta(meta);
+		return item;
 	}
 
 }

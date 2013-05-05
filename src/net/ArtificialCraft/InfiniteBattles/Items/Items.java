@@ -14,9 +14,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 
-/**
- * @author Giant
- */
 public class Items{
 
 	private IBattle plugin = IBattle.getPlugin();

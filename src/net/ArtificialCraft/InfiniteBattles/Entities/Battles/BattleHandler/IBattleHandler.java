@@ -52,4 +52,6 @@ public abstract class IBattleHandler implements Listener{
 
 	public abstract void load();
 
+	public abstract void start();
+
 }

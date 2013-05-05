@@ -34,8 +34,7 @@ public class CommandManager{
 	public enum Commands{
 
 		battle("ibattle", new BattleCommand(), new String[]{"infinitebattle", "infinitebattles"}),
-		join("join", new JoinCommand(), new String[]{""}),
-		contestant("states", new ContestantCommand(), new String[]{"contestant"});
+		contestant("status", new ContestantCommand(), new String[]{"contestant"});
 
 		String cmd;
 		ICommand exec;

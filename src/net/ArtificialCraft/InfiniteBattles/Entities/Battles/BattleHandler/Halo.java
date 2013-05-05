@@ -18,4 +18,9 @@ public class Halo extends IBattleHandler{
 
 	}
 
+	@Override
+	public void start(){
+
+	}
+
 }

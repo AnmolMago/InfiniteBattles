@@ -22,6 +22,11 @@ public class Spleef extends IBattleHandler{
 
 	}
 
+	@Override
+	public void start(){
+
+	}
+
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onDamage(EntityDamageEvent e){
 		if(!isBattleEvent(e)){return;}

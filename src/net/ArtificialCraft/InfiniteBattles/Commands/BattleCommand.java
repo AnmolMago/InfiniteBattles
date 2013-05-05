@@ -10,6 +10,7 @@ import net.ArtificialCraft.InfiniteBattles.IBattle;
 import net.ArtificialCraft.InfiniteBattles.Misc.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 /**
  * Enclosed in project InfiniteBattles for Aurora Enterprise.
@@ -20,7 +21,7 @@ public class BattleCommand implements ICommand{
 
 	@Override
 	public String execute(CommandSender sender, String[] args){
-		if(args.length > 1){
+		if(args.length >= 1){
 			if(args[0].equalsIgnoreCase("create")){
 				for(Battle b : QueueHandler.getQueue()){
 					if(b.getCreator().equalsIgnoreCase(sender.getName()))
@@ -45,7 +46,46 @@ public class BattleCommand implements ICommand{
 					return IError.outOfArenas;
 				}
 				createBattle(sender, bt, a);
-			}//join cmd
+			}else if(args[0].equalsIgnoreCase("join")){
+				if(!(sender instanceof Player)){
+					return IError.playerOnly;
+				}
+				Player p = (Player)sender;
+				if(IBattle.isPlayerPlaying(p.getName()) != null){
+					return IError.alreadyInBattle;
+				}
+				Battle b = IBattle.getBattle(args[1]);
+				if(b != null){
+					if(b.isJoinable()){
+						b.addContestant(IBattle.getContestant(p.getName()));
+						Util.msg(p, "You have been added to " + b.getName() + "!");
+					}else{
+						return "This battle has already started! Please type \"/spectate\" to watch!";
+					}
+				}else{
+					String running;
+					if(IBattle.getCurrentBattles().keySet().size() == 0){
+						running = "There are currently no battles available, type \"/battle create\" if you wish to create a battle!";
+					}else{
+						StringBuilder sb = new StringBuilder();
+						String b1 = "", b2 = "";
+						int count = 0;
+						if(IBattle.getCurrentBattles().containsKey("Battle1") && IBattle.getBattle("Battle1").isJoinable()){//You can join the battle "Battle1"
+							count++;
+							b1 = " \"Battle1\"";
+						}
+						if(IBattle.getCurrentBattles().containsKey("Battle1") && IBattle.getBattle("Battle2").isJoinable()){//You can join the battles "Battle1" and "Battle2"
+							if(count == 1)
+								b1 = "s" + b1 + " and ";
+
+							b2 = "\"Battle2\"";
+						}
+						sb.append("To join a battle type \"/join {Battle Name}\"! You can join the battle" + b1 + b2 + "!");
+						running = sb.toString();
+					}
+					return "This battle is not running! " + running;
+				}
+			}
 		}else{
 			IBattle.help(this);
 		}
@@ -73,7 +113,7 @@ public class BattleCommand implements ICommand{
 				public void run(){
 					Battle b = IBattle.getBattle(name);
 					if(b.getContestants().size() > 1){
-						b.start();
+						b.setUp();
 					}else{
 						b.end("there were not enough players");
 					}

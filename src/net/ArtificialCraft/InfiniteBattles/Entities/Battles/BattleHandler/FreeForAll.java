@@ -18,4 +18,9 @@ public class FreeForAll extends IBattleHandler{
 
 	}
 
+	@Override
+	public void start(){
+
+	}
+
 }

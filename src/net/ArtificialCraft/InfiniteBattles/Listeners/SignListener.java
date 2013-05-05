@@ -1,7 +1,6 @@
 package net.ArtificialCraft.InfiniteBattles.Listeners;
 
 import net.ArtificialCraft.InfiniteBattles.Entities.Battles.Battle;
-import net.ArtificialCraft.InfiniteBattles.Entities.Battles.BattleType;
 import net.ArtificialCraft.InfiniteBattles.IBattle;
 import net.ArtificialCraft.InfiniteBattles.Misc.Formatter;
 import net.ArtificialCraft.InfiniteBattles.Misc.Util;
@@ -16,16 +15,13 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.ItemStack;
-
-import java.util.Random;
 
 
 public class SignListener implements Listener{
 
 	@EventHandler
 	public void onClick(PlayerInteractEvent e){
-		if(e.getAction().equals(Action.LEFT_CLICK_AIR) || e.getAction().equals(Action.RIGHT_CLICK_AIR) || !PlayerHandler.isPlaying(e.getPlayer())){
+		if(e.getAction().equals(Action.LEFT_CLICK_AIR) || e.getAction().equals(Action.RIGHT_CLICK_AIR) || IBattle.isPlayerPlaying(e.getPlayer().getName()) == null){
 			return;
 		}
 		if(e.getClickedBlock().getType().equals(Material.WALL_SIGN) || e.getClickedBlock().getType().equals(Material.SIGN) || e.getClickedBlock().getType().equals(Material.SIGN_POST)){
@@ -33,11 +29,11 @@ public class SignListener implements Listener{
 			Player p = e.getPlayer();
 			Battle b = IBattle.isPlayerPlaying(p.getName());
 			if(b == null){
-				return null;
+				return;
 			}
 			if(s.getLine(0).equalsIgnoreCase("{FORCE START}")){
 				if(b.getTime() + 120000 > System.currentTimeMillis()){
-					//teleport users to arena;
+					IBattle.isPlayerPlaying(p.getName()).getHandler().start();
 				}else{
 					Util.error(p, "You still have to wait " + Formatter.formatTimeSpan(System.currentTimeMillis() - (b.getTime() + 120000)) + " before you can force start!");
 				}
