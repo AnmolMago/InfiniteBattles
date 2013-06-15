@@ -3,7 +3,6 @@ package net.ArtificialCraft.InfiniteBattles.Entities.Arena;
 import com.sk89q.worldedit.CuboidClipboard;
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.MaxChangedBlocksException;
-import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.data.DataException;
@@ -11,7 +10,6 @@ import net.ArtificialCraft.InfiniteBattles.IBattle;
 import net.ArtificialCraft.InfiniteBattles.Misc.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.PluginDisableEvent;
@@ -41,10 +39,10 @@ public class Rebuild implements Listener{
 	}
 
 	private static void pasteArena(Arena a) throws DataException, IOException, MaxChangedBlocksException{
-		EditSession es = new EditSession(new BukkitWorld(a.getBlueSpawn().getWorld()), Integer.MAX_VALUE);
+		EditSession es = new EditSession(new BukkitWorld(a.getFirstSpawn().getWorld()), Integer.MAX_VALUE);
 		@SuppressWarnings("deprecation") CuboidClipboard cc = CuboidClipboard.loadSchematic(new File(IBattle.getPlugin().getDataFolder(), a.getName().toLowerCase() + ".schematic"));
-		Location l = a.getPastepoint();
-		cc.paste(es, new Vector(l.getBlockX(), l.getBlockY(), l.getBlockZ()), false);
+		//Location l = a.getPastepoint();
+		//cc.paste(es, new Vector(l.getBlockX(), l.getBlockY(), l.getBlockZ()), false);
 	}
 
 	@EventHandler

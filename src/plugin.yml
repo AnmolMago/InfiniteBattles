@@ -1,0 +1,13 @@
+name: IBattle
+main: net.ArtificialCraft.InfiniteBattles.IBattle
+version: 1.0
+commands:
+   ibattle:
+      description: This is a blah command.
+      usage: /<command> [player]
+   join:
+      description: This is a blah command.
+      usage: /<command> [player]
+   status:
+      description: This is a blah command.
+      usage: /<command> [player]

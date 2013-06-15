@@ -15,84 +15,80 @@ import java.util.List;
 public class Arena{
 
 	String name = null;
-	Location bluespawn, redspawn, greenspawn, purplespawn, spectatorspawn, pitstop, pastepoint;
+	Location firstspawn, secondspawn, thirdspawn, fourthspawn, spectatorspawn, pitstop;
 	BattleType unique = null;
-	int max = 0;
 
-	public Arena(String name, Location bluespawn, Location redspawn, Location greenspawn, Location purplespawn, Location spectatorspawn, Location pitstop, Location pastepoint, int max){
+	public Arena(String name, Location firstspawn, Location secondspawn, Location thirdspawn, Location fourthspawn, Location spectatorspawn, Location pitstop){
 		this.name = name;
-		this.bluespawn = bluespawn;
-		this.redspawn = redspawn;
-		this.greenspawn = greenspawn;
-		this.purplespawn = purplespawn;
+		this.firstspawn = firstspawn;
+		this.secondspawn = secondspawn;
+		this.thirdspawn = thirdspawn;
+		this.fourthspawn = fourthspawn;
 		this.spectatorspawn = spectatorspawn;
 		this.pitstop = pitstop;
-		this.pastepoint = pastepoint;
-		this.max = max;
 	}
 
 	public String getName(){
 		return name;
 	}
 
-	public Location getBlueSpawn(){
-		return bluespawn;
+	public Location getFirstSpawn(){
+		return firstspawn;
 	}
 
-	public Location getRedSpawn(){
-		return redspawn;
+	public Location getSecondSpawn(){
+		return secondspawn;
 	}
 
-	public Location getGreenSpawn(){
-		return greenspawn;
+	public Location getThirdSpawn(){
+		return thirdspawn;
 	}
 
-	public Location getPurpleSpawn(){
-		return purplespawn;
+	public Location getFourthSpawn(){
+		return fourthspawn;
 	}
 
-	public Location getPitStop(){
+	public Location getSpectatorspawn(){
+		return spectatorspawn;
+	}
+
+	public Location getPitstop(){
 		return pitstop;
 	}
-
-	public void setBlueSpawn(Location spawn){
-		bluespawn = spawn;
+	public void setFirstSpawn(Location spawn){
+		firstspawn = spawn;
 	}
 
-	public void setRedSpawn(Location spawn){
-		redspawn = spawn;
+	public void setSecondSpawn(Location spawn){
+		secondspawn = spawn;
 	}
 
-	public void setGreenSpawn(Location spawn){
-		greenspawn = spawn;
+	public void setThirdSpawn(Location spawn){
+		thirdspawn = spawn;
 	}
 
-	public void setPurpleSpawn(Location spawn){
-		purplespawn = spawn;
+	public void setFourthSpawn(Location spawn){
+		fourthspawn = spawn;
 	}
 
 	public void setPitStop(Location stop){
 		pitstop = stop;
 	}
 
-	public Location getPastepoint(){
-		return pastepoint;
+	public void setSpectatorspawn(Location spectatorspawn){
+		this.spectatorspawn = spectatorspawn;
 	}
 
-	public void setPastepoint(Location pastepoint){
-		this.pastepoint = pastepoint;
-	}
-
-	public int getmax(){
-		return max;
+	public void setPitstop(Location pitstop){
+		this.pitstop = pitstop;
 	}
 
 	public List<Location> getSpawns(){
 		List<Location> l = new ArrayList<Location>();
-		l.add(bluespawn);
-		l.add(redspawn);
-		l.add(greenspawn);
-		l.add(purplespawn);
+		l.add(firstspawn);
+		l.add(secondspawn);
+		l.add(thirdspawn);
+		l.add(fourthspawn);
 		return l;
 	}
 
@@ -105,6 +101,6 @@ public class Arena{
 	}
 
 	public String toString(){
-		return name + "," + max + "," + (unique == null ? "null" : unique.name()) + "!" + Formatter.configLoc(bluespawn) + "," + Formatter.configLoc(redspawn) + "," + Formatter.configLoc(greenspawn) + "," + Formatter.configLoc(purplespawn);
+		return name + "," + (unique == null ? "null" : unique.name()) + "!" + Formatter.configLoc(firstspawn) + "," + Formatter.configLoc(secondspawn) + "," + Formatter.configLoc(thirdspawn) + "," + Formatter.configLoc(fourthspawn) + "," + Formatter.configLoc(spectatorspawn) + "," + Formatter.configLoc(pitstop);
 	}
 }

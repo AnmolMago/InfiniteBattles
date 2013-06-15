@@ -1,5 +1,7 @@
 package net.ArtificialCraft.InfiniteBattles.Events;
 
+import net.ArtificialCraft.InfiniteBattles.Entities.Contestant.Contestant;
+
 import java.util.List;
 
 /**
@@ -9,7 +11,13 @@ import java.util.List;
  */
 public class BattleStartEvent extends IEvent{
 
-	public BattleStartEvent(List<String> players){
+	List<Contestant> players;
 
+	public BattleStartEvent(List<Contestant> players){
+		this.players = players;
+	}
+
+	public List<Contestant> getPlayers(){
+		return players;
 	}
 }

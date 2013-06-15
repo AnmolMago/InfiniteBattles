@@ -1,17 +1,13 @@
 package net.ArtificialCraft.InfiniteBattles.Entities.Battles.BattleHandler;
 
-import net.ArtificialCraft.InfiniteBattles.Contestant.Contestant;
+import net.ArtificialCraft.InfiniteBattles.Entities.Contestant.Contestant;
 import net.ArtificialCraft.InfiniteBattles.Entities.Battles.Battle;
 import net.ArtificialCraft.InfiniteBattles.Entities.Battles.BattleType;
 import net.ArtificialCraft.InfiniteBattles.IBattle;
 import net.ArtificialCraft.InfiniteBattles.Misc.Formatter;
 import net.ArtificialCraft.InfiniteBattles.Misc.Util;
-import org.bukkit.Bukkit;
-import org.bukkit.Color;
-import org.bukkit.Effect;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
+import net.ArtificialCraft.InfiniteBattles.ScoreBoard.ScoreboardHandler;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -26,6 +22,7 @@ import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -51,13 +48,9 @@ public class CaptureTheFlag extends IBattleHandler{
 		redBlock.setTypeIdAndData(35, (byte)14, false);
 		blueBlock = Bukkit.getWorld(blueLoc.getWorld().getName()).getBlockAt(blueLoc);
 		blueBlock.setTypeIdAndData(35, (byte)11, false);
-		redTeam = getBattle().getScoreboard().registerNewTeam("redTeam");
-		redTeam.setCanSeeFriendlyInvisibles(true);
-		redTeam.setAllowFriendlyFire(false);
-		blueTeam = getBattle().getScoreboard().registerNewTeam("blueTeam");
-		blueTeam.setCanSeeFriendlyInvisibles(true);
-		blueTeam.setAllowFriendlyFire(false);
-		List<Contestant> teams = getBattle().getContestants();
+		redTeam = ScoreboardHandler.createTeam(board, "redTeam");
+		blueTeam = ScoreboardHandler.createTeam(board, "blueTeam");
+		List<Contestant> teams = new ArrayList<Contestant>(getBattle().getContestants());
 		int half = teams.size() / 2;
 		for(int i = 0; i <= half; i++)
 			redTeam.addPlayer(teams.remove(i).getPlayer());
@@ -81,10 +74,22 @@ public class CaptureTheFlag extends IBattleHandler{
 			p.updateInventory();
 			p.setScoreboard(board);
 		}
+		start();
 	}
 
 	@Override
 	public void start(){
+		for(OfflinePlayer offp : redTeam.getPlayers()){
+			Player p = offp.getPlayer();
+			if(p != null)
+				p.teleport(getBattle().getArena().getSecondSpawn());
+		}
+		for(OfflinePlayer offp : blueTeam.getPlayers()){
+			Player p = offp.getPlayer();
+			if(p != null)
+				p.teleport(getBattle().getArena().getFirstSpawn());
+		}
+		Util.broadcast(ChatColor.DARK_RED + "The battle " + ChatColor.DARK_AQUA + getBattle().getName() + ChatColor.DARK_RED + " has started, you may type " + ChatColor.DARK_AQUA + "\"/spectate " + getBattle().getName() + "\"" + ChatColor.DARK_RED + " to watch the battle!");
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
@@ -103,6 +108,8 @@ public class CaptureTheFlag extends IBattleHandler{
 				redHolder = p.getName();
 				e.getClickedBlock().setType(Material.AIR);
 				e.getPlayer().getInventory().addItem(new ItemStack(Material.WOOL, 1, (byte)14));
+				blueBlock = null;
+				getBattle().warnUsers(ChatColor.BLUE + e.getPlayer().getName() + ChatColor.RED + " has captured the flag of the red team!");
 			}
 		}else if(e.getClickedBlock().equals(blueBlock)){
 			if(board.getPlayerTeam(p).equals(blueTeam)){
@@ -116,6 +123,8 @@ public class CaptureTheFlag extends IBattleHandler{
 				blueHolder = p.getName();
 				e.getClickedBlock().setType(Material.AIR);
 				e.getPlayer().getInventory().addItem(new ItemStack(Material.WOOL, 1, (byte)11));
+				blueBlock = null;
+				getBattle().warnUsers(ChatColor.BLUE + e.getPlayer().getName() + ChatColor.RED + " has captured the flag of the blue team!");
 			}
 		}
 	}
@@ -123,11 +132,15 @@ public class CaptureTheFlag extends IBattleHandler{
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onDeath(PlayerDeathEvent e){
 		if(!isBattleEvent(e)){return;}
-		e.getDrops().clear();
+			e.getDrops().clear();
 		if(e.getEntity().getName().equalsIgnoreCase(redHolder)){
-			e.getEntity().getWorld().getBlockAt(e.getEntity().getLocation()).setTypeIdAndData(35, (byte)14, false);
+			Block bl = e.getEntity().getWorld().getBlockAt(e.getEntity().getLocation());
+			bl.setTypeIdAndData(35, (byte)14, false);
+			blueBlock = bl;
 		}else if(e.getEntity().getName().equalsIgnoreCase(blueHolder)){
-			e.getEntity().getWorld().getBlockAt(e.getEntity().getLocation()).setTypeIdAndData(35, (byte)11, false);
+			Block bl = e.getEntity().getWorld().getBlockAt(e.getEntity().getLocation());
+			bl.setTypeIdAndData(35, (byte)11, false);
+			redBlock = bl;
 		}
 	}
 
@@ -136,10 +149,14 @@ public class CaptureTheFlag extends IBattleHandler{
 		if(!isBattleEvent(e)){return;}
 		if(e.getPlayer().getName().equalsIgnoreCase(redHolder)){
 			e.getPlayer().getInventory().remove(Material.WOOL);
-			e.getPlayer().getWorld().getBlockAt(e.getPlayer().getLocation()).setTypeIdAndData(35, (byte)14, false);
+			Block bl = e.getPlayer().getWorld().getBlockAt(e.getPlayer().getLocation());
+			bl.setTypeIdAndData(35, (byte)14, false);
+			blueBlock = bl;
 		}else if(e.getPlayer().getName().equalsIgnoreCase(blueHolder)){
 			e.getPlayer().getInventory().remove(Material.WOOL);
-			e.getPlayer().getWorld().getBlockAt(e.getPlayer().getLocation()).setTypeIdAndData(35, (byte)11, false);
+			Block bl = e.getPlayer().getWorld().getBlockAt(e.getPlayer().getLocation());
+			bl.setTypeIdAndData(35, (byte)11, false);
+			redBlock = bl;
 		}
 	}
 
@@ -166,6 +183,15 @@ public class CaptureTheFlag extends IBattleHandler{
 			points.put(winner.getName(), 0);
 
 		points.put(winner.getName(), points.get(winner.getName()) + 1);
+		p.getInventory().remove(Material.WOOL);
+		Block bl = p.getWorld().getBlockAt(winner == redTeam ? blueLoc : redLoc);
+		if(winner.equals(redTeam)){
+			bl.setTypeIdAndData(35, (byte)11, false);
+			blueBlock = bl;
+		}else{
+			bl.setTypeIdAndData(35, (byte)14, false);
+			redBlock = bl;
+		}
 		if(points.get(winner.getName()) > 3){
 			declareWinner(winner);
 		}

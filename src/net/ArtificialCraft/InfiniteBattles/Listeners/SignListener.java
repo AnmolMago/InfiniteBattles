@@ -33,7 +33,7 @@ public class SignListener implements Listener{
 			}
 			if(s.getLine(0).equalsIgnoreCase("{FORCE START}")){
 				if(b.getTime() + 120000 > System.currentTimeMillis()){
-					IBattle.isPlayerPlaying(p.getName()).getHandler().start();
+					b.getHandler().start();
 				}else{
 					Util.error(p, "You still have to wait " + Formatter.formatTimeSpan(System.currentTimeMillis() - (b.getTime() + 120000)) + " before you can force start!");
 				}

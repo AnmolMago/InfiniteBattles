@@ -8,16 +8,16 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Random;
+
 /**
  * Enclosed in project InfiniteBattles for Aurora Enterprise.
  * Author: Josh Aurora
- * Date: 2013-04-29
+ * Date: 2013-05-08
  */
-public class FreeForAll extends IBattleHandler{
+public class LMS extends IBattleHandler{
 
-	public boolean started;
-
-	public FreeForAll(Battle b){
+	public LMS(Battle b){
 		super(b);
 	}
 
@@ -57,7 +57,11 @@ public class FreeForAll extends IBattleHandler{
 
 	@Override
 	public void start(){
-		started = true;
+		for(Contestant c : getBattle().getContestants()){
+			if(c.getPlayer() != null){
+				c.getPlayer().teleport(getBattle().getArena().getSpawns().get(new Random().nextInt(3)));
+			}
+		}
 	}
 
 	@EventHandler
@@ -67,5 +71,4 @@ public class FreeForAll extends IBattleHandler{
 		if(getBattle().getContestants().size() == 1)
 			getBattle().end(getBattle().getContestants().get(0));
 	}
-
 }

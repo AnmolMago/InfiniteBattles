@@ -1,10 +1,10 @@
-package net.ArtificialCraft.InfiniteBattles.Contestant;
+package net.ArtificialCraft.InfiniteBattles.Entities.Contestant;
 
 import net.ArtificialCraft.InfiniteBattles.Entities.Battles.BattleType;
 import net.ArtificialCraft.InfiniteBattles.IBattle;
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
+import net.ArtificialCraft.InfiniteBattles.Misc.Util;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
@@ -17,7 +17,6 @@ import java.util.HashMap;
 public class Contestant{
 
 	String name;
-	boolean onstreak = true;
 	int wins, losses, streak;
 	HashMap<BattleType, Integer> count = new HashMap<BattleType, Integer>();
 
@@ -25,12 +24,11 @@ public class Contestant{
 		name = p.getName();
 	}
 
-	public Contestant(String name, int wins, int losses, int streak, boolean onstreak, HashMap<BattleType, Integer> count){
+	public Contestant(String name, int wins, int losses, int streak, HashMap<BattleType, Integer> count){
 		this.name = name;
 		this.wins = wins;
 		this.losses = losses;
 		this.streak = streak;
-		this.onstreak = onstreak;
 		this.count = count;
 	}
 
@@ -66,19 +64,21 @@ public class Contestant{
 	}
 
 	private void addWin(){
-		if(onstreak)
-			streak++;
-
+		if(streak < 0)
+			streak = 0;
+		streak++;
 		wins++;
-		onstreak = true;
 	}
 
 	private void addLoss(){
-		onstreak = false;
+		if(streak > 0)
+			streak = 0;
+		streak--;
 		losses++;
 	}
 
 	public void onBattlePlayed(BattleType type, boolean win){
+		Util.broadcast(name + " | " + type + " | " + win);
 		if(win){
 			addWin();
 		}else{
@@ -96,14 +96,36 @@ public class Contestant{
 	}
 
 	public Player getPlayer(){
-		if(Bukkit.getPlayerExact(name) == null && (IBattle.isPlayerPlaying(name) != null)){
+		if(Bukkit.getPlayerExact(name) == null && IBattle.isPlayerPlaying(name) != null){
 				IBattle.isPlayerPlaying(name).removeContestant(this);
 		}
 		return Bukkit.getPlayerExact(name);
 	}
 
+	public Contestant clearInv(){
+		if(getPlayer() == null || !getPlayer().getWorld().getName().equalsIgnoreCase("Warfare"))
+			return this;
+		getPlayer().getInventory().clear();
+		getPlayer().getInventory().setArmorContents(null);
+		return this;
+	}
+
+	public boolean teleport(Location l){
+		return getPlayer() != null && getPlayer().teleport(l);
+	}
+
+	public String parseStreak(){
+		if(streak > 0){
+			return streak + " win" + (streak > 1 ? "s" : "");
+		}else if(streak < 0){
+			return (0 - streak) + " loss" + (streak < -1 ? "es" : "");
+		}else{
+			return "none";
+		}
+	}
+
 	public String toString(){
-		return name + "|" + wins + "|" + losses + "|" + streak + "|" + onstreak + "!" + countToString();
+		return name + "|" + wins + "|" + losses + "|" + streak + "!" + countToString();
 	}
 
 	private String countToString(){
@@ -111,10 +133,10 @@ public class Contestant{
 		for(BattleType bt : count.keySet())
 			sb.append(bt.name() + "," + count.get(bt) + "|");
 
-		return sb.toString().substring(0, sb.toString().length() - 1);
+		return sb.toString().substring(0, sb.toString().length() == 0 ? 0 : sb.toString().length() - 1);
 	}
 
-	public int hashCode(){
+	/*public int hashCode(){
 		return new HashCodeBuilder(17, 31).append(getName()).toHashCode();
 	}
 
@@ -128,6 +150,6 @@ public class Contestant{
 
 		Contestant c = (Contestant) obj;
 		return new EqualsBuilder().append(getName(), c.getName()).isEquals();
-	}
+	} */
 
 }

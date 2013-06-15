@@ -68,10 +68,6 @@ public class Util{
 		Bukkit.getServer().broadcastMessage(ChatColor.DARK_RED + "[IBattle] " + ChatColor.WHITE + msg);
 	}
 
-	public static boolean teleportRP(Player p){
-		return false; //p.teleport(IBattle.getPlugin().rolepicker);
-	}
-
 	public static String getBattleTypes(){
 		StringBuilder sb = new StringBuilder();
 		for(BattleType bt : BattleType.values())

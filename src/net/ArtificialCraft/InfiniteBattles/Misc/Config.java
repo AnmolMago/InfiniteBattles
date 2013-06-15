@@ -1,5 +1,6 @@
 package net.ArtificialCraft.InfiniteBattles.Misc;
 
+import net.ArtificialCraft.InfiniteBattles.Entities.Contestant.Contestant;
 import net.ArtificialCraft.InfiniteBattles.Entities.Arena.Arena;
 import net.ArtificialCraft.InfiniteBattles.Entities.Arena.ArenaHandler;
 import net.ArtificialCraft.InfiniteBattles.IBattle;
@@ -67,9 +68,21 @@ public class Config{
 		}catch(Exception e){
 			e.printStackTrace();
 		}
+		if(config.contains("rolepicker") && config.contains("invpicker")){
+			IBattle.setRolepicker(Formatter.parseLoc(config.getString("rolepicker")));
+			IBattle.setInvpicker(Formatter.parseLoc(config.getString("invpicker")));
+		}
 	}
 
 	public static void saveYamls(){
+		if(IBattle.getRolepicker() != null && IBattle.getInvpicker() != null){
+			config.set("rolepicker", Formatter.configLoc(IBattle.getRolepicker()));
+			config.set("invpicker", Formatter.configLoc(IBattle.getInvpicker()));
+		}
+
+		if(!config.contains("rolepicker") && !config.contains("invpicker")){
+			Util.broadcast("what the fuckkkkk");
+		}
 		try{
 			config.save(configFile);
 		}catch(IOException e){
@@ -89,11 +102,13 @@ public class Config{
 		}
 		IBattle.getArenas().putAll(arenas);
 		ArenaHandler.getUnusedArenas().putAll(arenas);
+		Util.debug(IBattle.getArenas().size() + "         dsdfsdfsdf         " + ArenaHandler.getUnusedArenas().size());
 	}
 
 	public static void addArena(Arena a){
 		String name = a.getName();
-		config.set("Arenas." + name + ".", a.toString());
+		config.set("Arenas." + name, a.toString());
+		ArenaHandler.addUnusedArena(a);
 		Config.saveYamls();
 	}
 
@@ -110,7 +125,12 @@ public class Config{
 			}
 			reader.close();
 		}catch(FileNotFoundException x){
-			f.mkdirs();
+			try{
+				f.createNewFile();
+			}catch(IOException xx){
+				x.printStackTrace();
+				xx.printStackTrace();
+			}
 		}catch(IOException x){
 			x.printStackTrace();
 		}
@@ -121,7 +141,19 @@ public class Config{
 	}
 
 	public static void saveContestants(){
-
+		try{
+			Writer output = new BufferedWriter(new FileWriter(getContestantList()));
+			for(Contestant c : IBattle.getContestants().values()){
+				try{
+					output.append(c.toString() + "\n");
+				}catch(IOException x){
+					x.toString();
+				}
+			}
+			output.close();
+		}catch(IOException x){
+			x.toString();
+		}
 	}
 
 }
