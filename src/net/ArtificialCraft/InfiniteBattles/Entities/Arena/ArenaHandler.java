@@ -91,7 +91,7 @@ public class ArenaHandler{
 		if(status.containsKey(p.getName())){
 			status.remove(p.getName());
 			creation.remove(p.getName());
-			Util.msg(p, ChatColor.RED + "You have been removed from the creation proccess and your changes have been discarded.");
+			Util.msg(p, ChatColor.RED + "You have been removed from the creation process and your changes have been discarded.");
 		}else{
 			Util.error(p, "You were not creating an arena!");
 		}

@@ -1,6 +1,7 @@
-package net.ArtificialCraft.InfiniteBattles.Entities.Battles.BattleHandler;
+package net.ArtificialCraft.InfiniteBattles.Entities.Battles.BattleHandler.InDev;
 
 import net.ArtificialCraft.InfiniteBattles.Entities.Battles.Battle;
+import net.ArtificialCraft.InfiniteBattles.Entities.Battles.BattleHandler.IBattleHandler;
 
 /**
  * Enclosed in project InfiniteBattles for Aurora Enterprise.

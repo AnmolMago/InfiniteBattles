@@ -4,6 +4,7 @@ import net.ArtificialCraft.InfiniteBattles.Entities.Contestant.Contestant;
 import net.ArtificialCraft.InfiniteBattles.Entities.Battles.Battle;
 import net.ArtificialCraft.InfiniteBattles.IBattle;
 import net.ArtificialCraft.InfiniteBattles.Misc.Util;
+import net.ArtificialCraft.InfiniteBattles.ScoreBoard.ScoreboardHandler;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -42,6 +43,8 @@ public class PlayerListener implements Listener{
 			b.removeContestant(IBattle.getContestant(name));
 			b.warnUsers(name + " has logged out and been kicked from the battle!");
 		}
+		if(e.getPlayer().getScoreboard() != null)
+			e.getPlayer().setScoreboard(ScoreboardHandler.getSBM().getNewScoreboard());
 	}
 
 	@EventHandler
@@ -74,6 +77,7 @@ public class PlayerListener implements Listener{
 			}else{
 				Util.error(e.getPlayer(), "We could not find a player to target!");
 			}
+			e.setCancelled(true);
 		}
 	}
 

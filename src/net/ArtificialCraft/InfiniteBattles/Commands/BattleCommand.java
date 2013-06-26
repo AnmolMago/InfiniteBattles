@@ -10,7 +10,6 @@ import net.ArtificialCraft.InfiniteBattles.IBattle;
 import net.ArtificialCraft.InfiniteBattles.Misc.Config;
 import net.ArtificialCraft.InfiniteBattles.Misc.Formatter;
 import net.ArtificialCraft.InfiniteBattles.Misc.Util;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
@@ -164,34 +163,18 @@ public class BattleCommand implements ICommand{
 	}
 
 	private void createBattle(CommandSender sender, BattleType bt, Arena a){
-		boolean toQueue = false;
-		if(IBattle.getCurrentBattles().size() >= 2)
-			toQueue = true;
+		boolean toQueue = IBattle.getCurrentBattles().size() >= 2;
 		final String name = IBattle.getCurrentBattles().containsKey("battle1") ? "Battle2" : "Battle1";
 		Battle b = new Battle(name, System.currentTimeMillis(), sender.getName(), bt, a);
-		IBattle.addBattle(b);
 		if(toQueue){
 			if(!QueueHandler.addToQueue(b)){
 				Util.error(sender, "The queue is filled with too many battles! Please wait!");
 				Util.debug("The queue is filled with too many battles! Please wait!");
 				return;
 			}
-			Util.error(sender, "Your battle has been added to the queue!");
+			Util.error(sender, "There are too many battles going on at once so your battle has been added to the queue!");
 		}else{
-			b.startAcceptingContestants();
-			if(sender instanceof Player)
-				b.addContestant(IBattle.getContestant(sender.getName()));
-			Bukkit.getScheduler().runTaskLaterAsynchronously(IBattle.getPlugin(), new Runnable(){
-				public void run(){
-					Battle b = IBattle.getBattle(name);
-					if(b.getContestants().size() > 1){
-						b.setUp();
-					}else{
-						Util.broadcast(b.getContestants().size() + "");
-						b.end("there were not enough players");
-					}
-				}
-			}, 200);
+			IBattle.startBattle(b);
 		}
 	}
 }

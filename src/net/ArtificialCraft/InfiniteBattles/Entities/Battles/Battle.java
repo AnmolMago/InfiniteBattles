@@ -14,6 +14,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 import uk.co.tggl.pluckerpluck.multiinv.MultiInvAPI;
@@ -31,7 +32,7 @@ import java.util.List;
 public class Battle{
 
 	long time;
-	String name, creator;
+	String Bname, creator;
 	Arena a;
 	Status status = Status.Joinable;
 	BattleType bt;
@@ -39,7 +40,7 @@ public class Battle{
 	private List<String> contestants = new ArrayList<String>();
 	private HashMap<String, Location> locations = new HashMap<String, Location>();
 	private List<String> spectators = new ArrayList<String>();
-	private HashMap<String, Integer> lives = new HashMap<String, Integer>();
+	public HashMap<String, Integer> lives = new HashMap<String, Integer>();
 	Scoreboard scoreboard;
 	MultiInvAPI miapi = IBattle.getMiAPI();
 
@@ -48,11 +49,15 @@ public class Battle{
 		this.bt = bt;
 		this.a = a;
 		this.time = time;
-		this.name = name;
+		this.Bname = name;
+	}
+
+	public void setStatus(Status s){
+		status = s;
 	}
 
 	public String getName(){
-		return name;
+		return Bname;
 	}
 
 	public IBattleHandler getHandler(){
@@ -83,24 +88,26 @@ public class Battle{
 		return status == Status.Joinable;
 	}
 
-	public boolean hasStarted(){
+	public boolean isStarted(){
 		return status == Status.Started;
 	}
 
 	public void startAcceptingContestants(){
-		Util.broadcast(ChatColor.DARK_AQUA + name + ChatColor.DARK_RED + " {" + ChatColor.GOLD + bt.getName() + ChatColor.DARK_RED + "} is now accepting contestants! Please type " + ChatColor.DARK_AQUA + "\"/join " + name + "\"" + ChatColor.DARK_RED + " to join!");
+		Util.broadcast(ChatColor.DARK_AQUA + Bname + ChatColor.DARK_RED + " {" + ChatColor.GOLD + bt.getName() + ChatColor.DARK_RED + "} is now accepting contestants! Please type " + ChatColor.DARK_AQUA + "\"/join " + Bname + "\"" + ChatColor.DARK_RED + " to join!");
 	}
 
 	public void setUp(){
-		handler = IBattle.getBattleHandler(bt, this);
 		scoreboard = ScoreboardHandler.getNewScoreBoard(this);
-		status = Status.Started;
+		handler = IBattle.getBattleHandler(bt, this);
+		status = Status.Preparing;
 		for(Contestant c : getContestants()){
 			Player p = c.getPlayer();
 			locations.put(c.getName(), p.getLocation());
 			MIInventory datinv = miapi.getPlayerInventory(p.getName(), p.getWorld().getName(), GameMode.SURVIVAL);
 			miapi.setPlayerInventory(p.getName(), "Warfare", GameMode.SURVIVAL, datinv);
 			p.teleport(a.getPitstop());
+			for(PotionEffect pe : c.getPlayer().getActivePotionEffects())
+				c.getPlayer().removePotionEffect(pe.getType());
 			p.setScoreboard(scoreboard);
 		}
 		handler.load();
@@ -128,34 +135,28 @@ public class Battle{
 			sb.append("!");
 		}
 		warnUsers(sb.toString());
-		if(getType().getLives() <= lives.get(p.getName())){
-			if(contestants.contains(c.getName()))
-				contestants.remove(c.getName());
-			addSpectator(c);
-			c.onBattlePlayed(getType(), false);
-		}
-		if(contestants.size() == 1){
-			end(IBattle.getContestant(contestants.get(0)));
-		}
 	}
 
 	public int getLivesLeft(Contestant c){
+		if(status.equals(Status.Joinable))
+			return getType().getLives();
 		return getType().getLives() - lives.get(c.getName());
 	}
 
 	public void end(String reason){
-		warnUsers(ChatColor.DARK_RED + "The battle " + ChatColor.DARK_AQUA + name + ChatColor.DARK_RED + " was cancelled because " + reason + "!");
+		warnUsers(ChatColor.DARK_RED + "The battle " + ChatColor.DARK_AQUA + Bname + ChatColor.DARK_RED + " was cancelled because " + reason + "!");
 		endAll();
 	}
 
 	public void end(Contestant c){
-		Util.broadcast(ChatColor.DARK_RED + "The battle " + ChatColor.DARK_AQUA + name + ChatColor.DARK_RED + " has been won by " + c.getName() + "!");
+		Util.broadcast(ChatColor.DARK_RED + "The battle " + ChatColor.DARK_AQUA + Bname + ChatColor.DARK_RED + " has been won by " + ChatColor.DARK_AQUA + c.getName() + "!");
 		c.onBattlePlayed(getType(), true);
+		c.clearInv().teleport(locations.get(c.getName()));
 		endAll();
 	}
 
 	public void end(Team team){
-		Util.broadcast(ChatColor.DARK_RED + "The battle " + ChatColor.DARK_AQUA + name + ChatColor.DARK_RED + " was won by the " + (team.getName().contains("red") ? "red team" : "blue team") + "!");
+		Util.broadcast(ChatColor.DARK_RED + "The battle " + ChatColor.DARK_AQUA + Bname + ChatColor.DARK_RED + " was won by the " + ChatColor.DARK_AQUA + team.getName() + ChatColor.DARK_RED + "!");
 		for(OfflinePlayer p : team.getPlayers()){
 			IBattle.getContestant(p.getName()).onBattlePlayed(getType(), true);
 		}
@@ -169,8 +170,13 @@ public class Battle{
 		if(a != null)
 			ArenaHandler.addUnusedArena(a);
 
-		for(String name : contestants)
-			IBattle.getContestant(name).clearInv().teleport(locations.get(name));
+		for(Contestant c : getContestants()){
+			c.clearInv().teleport(locations.get(c.getName()));
+			c.getPlayer().setScoreboard(ScoreboardHandler.getSBM().getNewScoreboard());
+			Util.debug(c.getName());
+			for(PotionEffect pe : c.getPlayer().getActivePotionEffects())
+				c.getPlayer().removePotionEffect(pe.getType());
+		}
 
 		for(String name : spectators)
 			IBattle.getContestant(name).clearInv().teleport(locations.get(name));
@@ -187,10 +193,7 @@ public class Battle{
 
 	public void removeContestant(Contestant c){
 		contestants.remove(c.getName());
-		locations.remove(c.getName());
-		if(contestants.size() == 1){
-			end(contestants.get(0));
-		}
+		c.getPlayer().setScoreboard(ScoreboardHandler.getSBM().getNewScoreboard());
 	}
 
 	public List<Contestant> getContestants(){
@@ -212,6 +215,12 @@ public class Battle{
 				Util.error(c.getPlayer(), msg);
 	}
 
+	public void msgUsers(String msg){
+		for(Contestant c : getContestants())
+			if(c.getPlayer() != null)
+				Util.msg(c.getPlayer(), msg);
+	}
+
 	public void addSpectator(Contestant c){
 		Player p = c.getPlayer();
 		if(contestants.contains(c.getName())){
@@ -222,6 +231,7 @@ public class Battle{
 		if(p != null){
 			spectators.add(c.getName());
 			p.teleport(a.getSpectatorspawn());
+			c.clearInv();
 		}
 	}
 

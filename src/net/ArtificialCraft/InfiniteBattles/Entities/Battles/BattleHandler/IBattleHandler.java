@@ -1,13 +1,15 @@
 package net.ArtificialCraft.InfiniteBattles.Entities.Battles.BattleHandler;
 
 import net.ArtificialCraft.InfiniteBattles.Entities.Battles.Battle;
+import net.ArtificialCraft.InfiniteBattles.Entities.Battles.BattleType;
+import net.ArtificialCraft.InfiniteBattles.Entities.Contestant.Contestant;
 import net.ArtificialCraft.InfiniteBattles.IBattle;
 import net.ArtificialCraft.InfiniteBattles.Misc.Config;
-import net.ArtificialCraft.InfiniteBattles.Misc.Util;
 import org.bukkit.Bukkit;
-import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
+import org.bukkit.entity.Tameable;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
@@ -15,6 +17,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerEvent;
@@ -48,17 +51,27 @@ public abstract class IBattleHandler implements Listener{
 		return IBattle.getBattle(battle);
 	}
 
-	protected boolean isBattleEvent(Player p){
-		return getBattle().hasContestant(IBattle.getContestant(p.getName()));
-	}
-
 	protected boolean isBattleEvent(Event e){
+		if(getBattle().isJoinable())
+			return false;
 		if(e instanceof EntityEvent){
 			EntityEvent ee = (EntityEvent) e;
-			if(ee.getEntity() instanceof Player){
-				Player p = (Player)ee.getEntity();
-				return p.getWorld().getName().equalsIgnoreCase("Warfare") && getBattle().hasContestant(IBattle.getContestant(p.getName()));
+			Player p = null;
+			if(ee instanceof EntityDamageByEntityEvent){
+				EntityDamageByEntityEvent ebe = (EntityDamageByEntityEvent)ee;
+				if(ebe.getDamager() instanceof Player){
+					p = (Player)ebe.getDamager();
+				}else if(ebe.getDamager() instanceof Projectile){
+					p = (Player) ((Projectile)ebe.getDamager()).getShooter();
+				}else if(ebe.getDamager() instanceof Tameable){
+					if(((Tameable)ebe.getDamager()).getOwner() instanceof Player){
+						p = (Player) ((Tameable)ebe.getDamager()).getOwner();
+					}
+				}
+			}else if(ee.getEntity() instanceof Player){
+				p = (Player)ee.getEntity();
 			}
+			return p != null && p.getWorld().getName().equalsIgnoreCase("Warfare") && getBattle().hasContestant(IBattle.getContestant(p.getName()));
 		}else if(e instanceof VehicleEvent){
 			VehicleEvent ve = (VehicleEvent) e;
 			Player p = (Player) ve.getVehicle().getPassenger();
@@ -67,7 +80,6 @@ public abstract class IBattleHandler implements Listener{
 			PlayerEvent pe = (PlayerEvent)e;
 			return pe.getPlayer().getWorld().getName().equalsIgnoreCase("Warfare") && getBattle().hasContestant(IBattle.getContestant(pe.getPlayer().getName()));
 		}else if(e instanceof BlockEvent){
-			Block b = ((BlockEvent)e).getBlock();
 			Player p;
 			if(e instanceof BlockPlaceEvent){
 				p = ((BlockPlaceEvent)e).getPlayer();
@@ -83,8 +95,18 @@ public abstract class IBattleHandler implements Listener{
 
 	@EventHandler
 	public void onDeath(PlayerDeathEvent e){
-		Util.broadcast(e.getEntity().getName());
 		getBattle().onContestantDeath(e.getEntity());
+		if(getBattle().getType().equals(BattleType.Capture_The_Flag) || getBattle().getType().equals(BattleType.Infection) || getBattle().getType().equals(BattleType.PaintBall))
+			return;
+		Contestant c = IBattle.getContestant(e.getEntity().getName());
+		if(getBattle().getType().getLives() <= getBattle().lives.get(c.getName())){
+			if(getBattle().hasContestant(c))
+				getBattle().removeContestant(c);
+			getBattle().addSpectator(c);
+			c.onBattlePlayed(getBattle().getType(), false);
+		}
+		if(getBattle().getContestants().size() == 1)
+			getBattle().end(getBattle().getContestants().get(0));
 	}
 
 	public abstract void load();

@@ -1,5 +1,6 @@
 package net.ArtificialCraft.InfiniteBattles.ScoreBoard;
 
+import net.ArtificialCraft.InfiniteBattles.Entities.Battles.BattleType;
 import net.ArtificialCraft.InfiniteBattles.Entities.Contestant.Contestant;
 import net.ArtificialCraft.InfiniteBattles.Entities.Battles.Battle;
 import org.bukkit.Bukkit;
@@ -22,17 +23,20 @@ public class ScoreboardHandler{
 
 	static ScoreboardManager manager = Bukkit.getScoreboardManager();
 
+	public static ScoreboardManager getSBM(){
+		return manager;
+	}
+
 	public static Scoreboard getNewScoreBoard(Battle b){
 		Scoreboard sb = manager.getNewScoreboard();
+		if(b.getType().equals(BattleType.Infection) || b.getType().equals(BattleType.Spleef) || b.getType().equals(BattleType.Duck_Hunt) || b.getType().equals(BattleType.Capture_The_Flag))
+			return sb;
 		Objective health = sb.registerNewObjective("Lives", "dummy");
 		health.setDisplaySlot(DisplaySlot.BELOW_NAME);
-		health.setDisplayName("lives");
+		health.setDisplayName(ChatColor.RED + "lives");
 		for(Contestant c : b.getContestants()){
 			health.getScore(c.getPlayer()).setScore(b.getLivesLeft(c));
 		}
-		Objective side = sb.registerNewObjective("IBattle", "dummy");
-		side.setDisplaySlot(DisplaySlot.SIDEBAR);
-		side.setDisplayName(ChatColor.GOLD + b.getType().getName());
 		return sb;
 	}
 

@@ -1,5 +1,6 @@
 package net.ArtificialCraft.InfiniteBattles.Entities.Battles.BattleHandler;
 
+import net.ArtificialCraft.InfiniteBattles.Entities.Battles.Status;
 import net.ArtificialCraft.InfiniteBattles.Entities.Contestant.Contestant;
 import net.ArtificialCraft.InfiniteBattles.Entities.Battles.Battle;
 import org.bukkit.Material;
@@ -14,8 +15,6 @@ import org.bukkit.inventory.ItemStack;
  * Date: 2013-04-29
  */
 public class FreeForAll extends IBattleHandler{
-
-	public boolean started;
 
 	public FreeForAll(Battle b){
 		super(b);
@@ -57,7 +56,7 @@ public class FreeForAll extends IBattleHandler{
 
 	@Override
 	public void start(){
-		started = true;
+		getBattle().setStatus(Status.Started);
 	}
 
 	@EventHandler

@@ -78,7 +78,6 @@ public class Contestant{
 	}
 
 	public void onBattlePlayed(BattleType type, boolean win){
-		Util.broadcast(name + " | " + type + " | " + win);
 		if(win){
 			addWin();
 		}else{
@@ -111,7 +110,9 @@ public class Contestant{
 	}
 
 	public boolean teleport(Location l){
-		return getPlayer() != null && getPlayer().teleport(l);
+		if(l == null)
+			Util.debug("Location is null u biatch");
+		return getPlayer() != null && l != null && getPlayer().teleport(l);
 	}
 
 	public String parseStreak(){
@@ -120,7 +121,7 @@ public class Contestant{
 		}else if(streak < 0){
 			return (0 - streak) + " loss" + (streak < -1 ? "es" : "");
 		}else{
-			return "none";
+			return "None";
 		}
 	}
 

@@ -44,6 +44,9 @@ public class IBattle extends JavaPlugin{
 		Config.saveYamls();
 		Config.saveContestants();
 		getServer().getScheduler().cancelTasks(this);
+		for(Battle b : currentBattles.values())
+			b.end("the plugin is being debugged!");
+
 		Util.debug("[InfiniteBattles] Plugin disabled!");
 	}
 
@@ -131,20 +134,21 @@ public class IBattle extends JavaPlugin{
 				return new CaptureTheFlag(b);
 			case Cars:
 				return new Cars(b);
+			case Duck_Hunt:
+				return new DuckHunt(b);
+			case Infection:
+				return new Infection(b);
 			case InvPick:
 				return new InvPick(b);
-			case Last_Man_Standing:
-				return new LMS(b);
-			case One_Hit_Ko:
-				return new OneHitKO(b);
 			case PaintBall:
 				return new PaintBall(b);
 			case Role_Play:
 				return new RolePlay(b);
 			case Spleef:
 				return new Spleef(b);
+			default:
+				return new FreeForAll(b);
 		}
-		return null;
 	}
 
 	public static Battle isPlayerPlaying(String p){
@@ -163,6 +167,7 @@ public class IBattle extends JavaPlugin{
 		b.startAcceptingContestants();
 		if(Bukkit.getPlayer(b.getCreator()) != null)
 			b.addContestant(IBattle.getContestant(b.getCreator()));
+		addBattle(b);
 		Bukkit.getScheduler().runTaskLaterAsynchronously(IBattle.getPlugin(), new Runnable(){
 			public void run(){
 				Battle b = IBattle.getBattle(name);

@@ -6,6 +6,7 @@ import org.bukkit.Location;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Enclosed in project InfiniteBattles for Aurora Enterprise.
@@ -50,6 +51,10 @@ public class Arena{
 
 	public Location getSpectatorspawn(){
 		return spectatorspawn;
+	}
+
+	public Location getRandomSpawn(){
+		return getSpawns().get(new Random().nextInt(getSpawns().size()));
 	}
 
 	public Location getPitstop(){

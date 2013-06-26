@@ -1,7 +1,9 @@
 package net.ArtificialCraft.InfiniteBattles.Entities.Battles.BattleHandler;
 
-import net.ArtificialCraft.InfiniteBattles.Entities.Contestant.Contestant;
 import net.ArtificialCraft.InfiniteBattles.Entities.Battles.Battle;
+import net.ArtificialCraft.InfiniteBattles.Entities.Battles.Status;
+import net.ArtificialCraft.InfiniteBattles.Entities.Contestant.Contestant;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -9,10 +11,12 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
-import java.util.Random;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Enclosed in project InfiniteBattles for Aurora Enterprise.
@@ -21,7 +25,7 @@ import java.util.Random;
  */
 public class Spleef extends IBattleHandler{
 
-	boolean started;
+	List<Location> blocks = new ArrayList<Location>();
 
 	public Spleef(Battle b){
 		super(b);
@@ -29,6 +33,7 @@ public class Spleef extends IBattleHandler{
 
 	@Override
 	public void load(){
+		ItemStack head = new ItemStack(Material.LEATHER_HELMET), chest = new ItemStack(Material.LEATHER_CHESTPLATE), legs = new ItemStack(Material.LEATHER_LEGGINGS), boots = new ItemStack(Material.LEATHER_BOOTS);
 		for(Contestant c : getBattle().getContestants()){
 			Player p = c.getPlayer();
 			if(p == null){continue;}
@@ -42,12 +47,12 @@ public class Spleef extends IBattleHandler{
 
 	@Override
 	public void start(){
-		started = true;
 		for(Contestant c : getBattle().getContestants()){
 			Player p = c.getPlayer();
 			if(p == null){continue;}
-			p.teleport(getBattle().getArena().getSpawns().get(new Random().nextInt(3)));
+			p.teleport(getBattle().getArena().getRandomSpawn());
 		}
+		getBattle().setStatus(Status.Started);
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
@@ -60,12 +65,20 @@ public class Spleef extends IBattleHandler{
 
 	@EventHandler
 	public void onSnowBreak(BlockBreakEvent e){
-		if(!isBattleEvent(e.getPlayer())){return;}
+		if(!isBattleEvent(e)){return;}
 		if(e.getBlock().getType().equals(Material.SNOW_BLOCK)){
 			e.getBlock().getDrops().clear();
-		}else{
+			blocks.add(e.getBlock().getLocation());
+		}else if(!e.getBlock().getType().equals(Material.SNOW)){
 			e.setCancelled(true);
 		}
 	}
 
+	@EventHandler
+	public void onDeath(PlayerDeathEvent e){
+		if(getBattle().getContestants().size() == 1){
+			for(Location l : blocks)
+				l.getBlock().setType(Material.SNOW_BLOCK);
+		}
+	}
 }

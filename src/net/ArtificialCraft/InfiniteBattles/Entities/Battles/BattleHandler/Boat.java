@@ -1,7 +1,8 @@
 package net.ArtificialCraft.InfiniteBattles.Entities.Battles.BattleHandler;
 
-import net.ArtificialCraft.InfiniteBattles.Entities.Contestant.Contestant;
 import net.ArtificialCraft.InfiniteBattles.Entities.Battles.Battle;
+import net.ArtificialCraft.InfiniteBattles.Entities.Battles.Status;
+import net.ArtificialCraft.InfiniteBattles.Entities.Contestant.Contestant;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -20,7 +21,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 import java.util.HashMap;
-import java.util.Random;
 
 /**
  * Enclosed in project InfiniteBattles for Aurora Enterprise.
@@ -30,9 +30,8 @@ import java.util.Random;
 public class Boat extends IBattleHandler{
 
 	HashMap<String, Integer> damage = new HashMap<String, Integer>();
-	boolean started = false;
 
-	public Boat(Battle b){//TODO REMEMBER BOAT HAS A BOATSPAWN IN CONFIGURATIONSECTION
+	public Boat(Battle b){
 		super(b);
 	}
 
@@ -59,13 +58,13 @@ public class Boat extends IBattleHandler{
 
 	@Override
 	public void start(){
-		started = true;
+		getBattle().setStatus(Status.Started);
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onDamage(EntityDamageByEntityEvent e){
 		if(!isBattleEvent(e)){return;}
-		if(!started){
+		if(!getBattle().isStarted()){
 			e.setCancelled(true);
 			return;
 		}
@@ -106,13 +105,13 @@ public class Boat extends IBattleHandler{
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onVehicleEnter(VehicleEnterEvent e){
 		if(!isBattleEvent(e)){return;}
-		e.getVehicle().teleport(getBattle().getArena().getSpawns().get(new Random().nextInt(3)));
+		e.getVehicle().teleport(getBattle().getArena().getRandomSpawn());
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onVehicleMove(VehicleMoveEvent e){
 		if(!isBattleEvent(e)){return;}
-		if(!started){
+		if(!getBattle().isStarted()){
 			e.getVehicle().teleport(e.getFrom());
 			if(e.getVehicle().getPassenger() instanceof Player)
 				((Player)e.getVehicle().getPassenger()).sendMessage(ChatColor.RED + "You cannot start moving until everyone has joined!");

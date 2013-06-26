@@ -8,6 +8,7 @@ package net.ArtificialCraft.InfiniteBattles.Entities.Battles;
 public enum Status{
 
 	Joinable,
+	Preparing,
 	Started
 
 }

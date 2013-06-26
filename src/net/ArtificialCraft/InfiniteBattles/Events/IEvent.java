@@ -11,6 +11,8 @@ import org.bukkit.event.HandlerList;
  */
 public class IEvent extends Event{
 
+	private static final HandlerList handlers = new HandlerList();
+
 	public IEvent getEvent(){
 		return this;
 	}
@@ -20,7 +22,7 @@ public class IEvent extends Event{
 	}
 
 	@Override
-	public HandlerList getHandlers(){
-		return null;
+	public HandlerList getHandlers() {
+		return handlers;
 	}
 }

@@ -79,16 +79,12 @@ public class CaptureTheFlag extends IBattleHandler{
 
 	@Override
 	public void start(){
-		for(OfflinePlayer offp : redTeam.getPlayers()){
-			Player p = offp.getPlayer();
-			if(p != null)
-				p.teleport(getBattle().getArena().getSecondSpawn());
-		}
-		for(OfflinePlayer offp : blueTeam.getPlayers()){
-			Player p = offp.getPlayer();
-			if(p != null)
-				p.teleport(getBattle().getArena().getFirstSpawn());
-		}
+		for(OfflinePlayer offp : redTeam.getPlayers())
+			IBattle.getContestant(offp.getName()).teleport(getBattle().getArena().getSecondSpawn());
+
+		for(OfflinePlayer offp : blueTeam.getPlayers())
+			IBattle.getContestant(offp.getName()).teleport(getBattle().getArena().getFirstSpawn());
+
 		Util.broadcast(ChatColor.DARK_RED + "The battle " + ChatColor.DARK_AQUA + getBattle().getName() + ChatColor.DARK_RED + " has started, you may type " + ChatColor.DARK_AQUA + "\"/spectate " + getBattle().getName() + "\"" + ChatColor.DARK_RED + " to watch the battle!");
 	}
 

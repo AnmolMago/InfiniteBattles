@@ -1,7 +1,8 @@
 package net.ArtificialCraft.InfiniteBattles.Entities.Battles.BattleHandler;
 
-import net.ArtificialCraft.InfiniteBattles.Entities.Contestant.Contestant;
 import net.ArtificialCraft.InfiniteBattles.Entities.Battles.Battle;
+import net.ArtificialCraft.InfiniteBattles.Entities.Battles.Status;
+import net.ArtificialCraft.InfiniteBattles.Entities.Contestant.Contestant;
 import net.ArtificialCraft.InfiniteBattles.IBattle;
 import net.ArtificialCraft.InfiniteBattles.Misc.Util;
 import org.bukkit.Bukkit;
@@ -19,11 +20,11 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Random;
 import java.util.Set;
 
 /**
@@ -36,7 +37,6 @@ public class RolePlay extends IBattleHandler{
 	Set<String> chosen = new HashSet<String>();
 	private static HashMap<String, String> roles = new HashMap<String, String>();
 	private static HashMap<String, Long> lightning = new HashMap<String, Long>();
-	private boolean started;
 
 	public RolePlay(Battle b){
 		super(b);
@@ -53,18 +53,18 @@ public class RolePlay extends IBattleHandler{
 
 	@Override
 	public void start(){
-		started = true;
+		getBattle().setStatus(Status.Started);
 		for(Contestant c : getBattle().getContestants()){
 			Player p = c.getPlayer();
 			if(p != null)
-				p.teleport(getBattle().getArena().getSpawns().get(new Random().nextInt(3)));
+				p.teleport(getBattle().getArena().getRandomSpawn());
 		}
 	}
 
 	@EventHandler
 	public void onDamage(EntityDamageEvent e){
 		if(!isBattleEvent(e)){return;}
-		if(!started){
+		if(!getBattle().isStarted()){
 			e.setCancelled(true);
 		}
 		Player p = (Player)e.getEntity();
@@ -96,11 +96,11 @@ public class RolePlay extends IBattleHandler{
 		if(e.getClickedBlock().getType().equals(Material.WALL_SIGN) || e.getClickedBlock().getType().equals(Material.SIGN) || e.getClickedBlock().getType().equals(Material.SIGN_POST)){
 			Sign s = (Sign)e.getClickedBlock().getState();
 			Battle b = getBattle();
-			if(s.getLine(0).equalsIgnoreCase("{Role}") && started){
+			if(s.getLine(0).equalsIgnoreCase("{Role}") && getBattle().isStarted()){
 				Util.error(e.getPlayer(), "You cannot use this sign when fighting!");
 				return;
 			}
-			if(s.getLine(0).equalsIgnoreCase("{Role}") && addClassInv(s.getLine(1), p, b)){
+			if(s.getLine(0).equalsIgnoreCase("{Role}") && addClassInv(s.getLine(1), p)){
 				chosen.add(p.getName());
 				p.teleport(getBattle().getArena().getPitstop());
 				Util.msg(p, "You will start this battle as a " + ChatColor.DARK_AQUA + roles.get(p.getName()) + "§6!");
@@ -126,7 +126,17 @@ public class RolePlay extends IBattleHandler{
 	}
 
 	@EventHandler
+	public void onRespawn(PlayerRespawnEvent e){
+		if(!isBattleEvent(e)){return;}
+		String name = e.getPlayer().getName();
+		if(roles.containsKey(name))
+			addClassInv(roles.get(name), e.getPlayer());
+		e.setRespawnLocation(getBattle().getArena().getRandomSpawn());
+	}
+
+	@EventHandler
 	public void onTarget(EntityTargetLivingEntityEvent e){
+		if(!isBattleEvent(e)){return;}
 		if(e.getTarget() instanceof Player && !(e.getEntity() instanceof Player)){
 			Player p = (Player)e.getTarget();
 			if(roles.containsKey(p.getName()) && roles.get(p.getName()).equals("mage")){
@@ -136,7 +146,7 @@ public class RolePlay extends IBattleHandler{
 	}
 
 	@SuppressWarnings( "deprecation" )
-	public static boolean addClassInv(String c, Player p, Battle b){
+	public static boolean addClassInv(String c, Player p){
 		if(!p.getWorld().getName().equalsIgnoreCase("Warfare")){
 			Util.error(p, ChatColor.RED + "Not in this world.");
 			return false;

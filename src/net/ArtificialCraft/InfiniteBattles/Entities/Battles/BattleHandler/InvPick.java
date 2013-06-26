@@ -1,7 +1,8 @@
 package net.ArtificialCraft.InfiniteBattles.Entities.Battles.BattleHandler;
 
-import net.ArtificialCraft.InfiniteBattles.Entities.Contestant.Contestant;
 import net.ArtificialCraft.InfiniteBattles.Entities.Battles.Battle;
+import net.ArtificialCraft.InfiniteBattles.Entities.Battles.Status;
+import net.ArtificialCraft.InfiniteBattles.Entities.Contestant.Contestant;
 import net.ArtificialCraft.InfiniteBattles.IBattle;
 import net.ArtificialCraft.InfiniteBattles.Items.ItemID;
 import net.ArtificialCraft.InfiniteBattles.Items.Items;
@@ -16,7 +17,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
-import java.util.Random;
 
 /**
  * Enclosed in project InfiniteBattles for Aurora Enterprise.
@@ -27,7 +27,6 @@ public class InvPick extends IBattleHandler{
 
 	private static HashMap<String, Integer> points = new HashMap<String, Integer>();
 	private static Items iH = new Items();
-	private boolean started = false;
 
 	public InvPick(Battle b){
 		super(b);
@@ -35,26 +34,23 @@ public class InvPick extends IBattleHandler{
 
 	@Override
 	public void load(){
-
+		for(Contestant c : getBattle().getContestants())
+			c.teleport(IBattle.getInvpicker());
 	}
 
 	@Override
 	public void start(){
-		started = true;
-		for(Contestant c : getBattle().getContestants()){
-			Player p = c.getPlayer();
-			if(p != null)
-				p.teleport(getBattle().getArena().getSpawns().get(new Random().nextInt(3)));
-		}
+		getBattle().setStatus(Status.Started);
+		for(Contestant c : getBattle().getContestants())
+			c.teleport(getBattle().getArena().getRandomSpawn());
 	}
 
 	@EventHandler
 	public void onClick(PlayerInteractEvent e){
-		if(!isBattleEvent(e)){return;}
-		if(e.getAction().equals(Action.LEFT_CLICK_AIR) || e.getAction().equals(Action.RIGHT_CLICK_AIR) || IBattle.isPlayerPlaying(e.getPlayer().getName()) == null){
+		if(!isBattleEvent(e) || e.getAction().equals(Action.LEFT_CLICK_AIR) || e.getAction().equals(Action.RIGHT_CLICK_AIR)){
 			return;
 		}
-		if(started){
+		if(getBattle().isStarted()){
 			Util.error(e.getPlayer(), "You cannot use this sign when fighting!");
 			return;
 		}
@@ -70,12 +66,7 @@ public class InvPick extends IBattleHandler{
 					p.teleport(b.getArena().getPitstop());
 					points.remove(p.getName());
 					if(points.size() == 0){
-						for(Contestant c : b.getContestants()){
-							Player bp = c.getPlayer();
-							if(bp != null){
-								bp.teleport(b.getArena().getSpawns().get(new Random().nextInt(b.getArena().getSpawns().size())));
-							}
-						}
+						start();
 					}
 					return;
 				}

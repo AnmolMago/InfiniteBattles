@@ -26,10 +26,10 @@ public class ContestantCommand implements ICommand{
 		if(c == null)
 			return IError.invalidContestant;
 		sender.sendMessage(ChatColor.DARK_GREEN + "Statistics:");
-		sender.sendMessage(ChatColor.DARK_RED + "Wins: " + ChatColor.BLUE + c.getWins() + ChatColor.DARK_GREEN
+		sender.sendMessage(ChatColor.DARK_RED + "     Wins: " + ChatColor.BLUE + c.getWins() + ChatColor.DARK_GREEN
 				+ "     |     " + ChatColor.DARK_RED + "Losses: " + ChatColor.BLUE + c.getLosses() + ChatColor.DARK_GREEN
 				+ "     |     " + ChatColor.DARK_RED + "Streak: " + ChatColor.BLUE + c.parseStreak());
-		sender.sendMessage(ChatColor.DARK_GREEN + "Games Played:" + (c.getTotalPlayed() == 0 ? "None" : c.getTotalPlayed()));
+		sender.sendMessage(ChatColor.DARK_GREEN + "Games Played: " + ChatColor.DARK_RED + (c.getTotalPlayed() == 0 ? "None" : c.getTotalPlayed()));
 		for(BattleType b : c.getCount().keySet())
 			sender.sendMessage(ChatColor.DARK_RED + "      " + b.name() + ": " + ChatColor.BLUE + c.getCount().get(b));
 		return null;
