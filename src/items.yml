@@ -1,0 +1,969 @@
+version: 0.2
+names:
+    item0:
+    - Air
+    - None
+    - 'Null'
+    - Nil
+    - Nothing
+    - Empty
+    item1:
+    - Stone
+    - Smooth Stone
+    - Nature Stone
+    - Smelted Stone
+    item2: Grass Block
+    item3: Dirt
+    item4:
+    - Cobblestone
+    - Cobble
+    item5:
+    - Wooden Planks
+    - Plank
+    - Wood Plank
+    - Wooden Plank
+    item6:
+    - Sapling
+    - Tree
+    item7: Bedrock
+    item8: Flowing Water
+    item9: Stationary Water
+    item10: Flowing Lava
+    item11: Stationary Lava
+    item12: Sand
+    item13: Gravel
+    item14: Gold Ore
+    item15: Iron Ore
+    item16: Coal Ore
+    item17: Log
+    item18:
+    - Leaves
+    - Leaf
+    item19: Sponge
+    item20: Glass
+    item21:
+    - Lapis Lazuli Ore
+    - Lapis
+    - Lapiz
+    - Lapiz Lazuli Ore
+    item22:
+    - Lapis Lazuli Block
+    - Lapis Block
+    - Lapiz Block
+    - Lapiz Lazuli Block
+    item23: Dispenser
+    item24: Sandstone
+    item25: Note Block
+    item26:
+    - Bed Block
+    - Bed
+    item27: Powered Rail
+    item28: Detector Rail
+    item29: Sticky Piston
+    item30: Cobweb
+    item31: Tall Grass
+    item32: Dead Bush
+    item33: Piston
+    item35:
+    - Wool
+    - Cloth
+    - Fabric
+    item37:
+    - Dandelion
+    - Yellow Plant
+    item38:
+    - Rose
+    - Red Plant
+    item39: Mushroom
+    item40: Toadstool
+    item41:
+    - Gold Block
+    - Block of Gold
+    item42:
+    - Iron Block
+    - Block of Iron
+    item43: Double Slab
+    item44: Slab
+    item45: Brick Block
+    item46: TNT
+    item47: Bookshelf
+    item48:
+    - Moss Stone
+    - Moss Rock
+    - Moss Cobble
+    - Moss Cobblestone
+    - Moss
+    - Mossy Stone
+    - Mossy Cobble
+    item49: Obsidian
+    item50:
+    - Torch
+    - Flame
+    item51: Fire
+    item52:
+    - Spawner
+    - Mob Spawner
+    item53: Wooden Stairs
+    item54: Chest
+    item55: Redstone Wire
+    item56: Diamond Ore
+    item57:
+    - Diamond Block
+    - Block of Diamond
+    item58:
+    - Crafting Table
+    - Crafting Bench
+    - Craft Bench
+    - Craft Block
+    item59:
+    - Crops
+    - Wheat Plant
+    item60: Farmland
+    item61:
+    - Furnace
+    - Oven
+    item62: Burning Furnace
+    item63: Sign Post
+    item64: Wooden Door Block
+    item65: Ladder
+    item66:
+    - Rails
+    - Rail
+    - Tracks
+    - Track
+    - Train Tracks
+    - Train Track
+    - Minecart Rail
+    - Minecart Track
+    item67:
+    - Cobblestone Stairs
+    - Stairs
+    - Cobble Stairs
+    - Rock Stairs
+    item68: Wall Sign
+    item69: Lever
+    item70:
+    - Stone Pressure Plate
+    - Pressure Plate
+    - Rock Plate
+    item71: Iron Door Block
+    item72:
+    - Wooden Pressure Plate
+    - Wood Pressure Plate
+    - Wood Plate
+    - Wooden Plate
+    item73: Redstone Ore
+    item74: Glowing Redstone Ore
+    item75: Unlit Redstone Torch
+    item76:
+    - Redstone Torch
+    - Red Torch
+    item77:
+    - Button
+    - Stone Button
+    item78: Snow
+    item79: Ice
+    item80:
+    - Snow Block
+    - Block of Snow
+    item81:
+    - Cactus
+    - Cacti
+    item82:
+    - Clay Block
+    - Block of Clay
+    item83: Sugar Cane Block
+    item84:
+    - Jukebox
+    - Radio
+    - Juke
+    - Musicbox
+    - Record Player
+    - Turntable
+    item85:
+    - Fence
+    - Pole
+    item86: Pumpkin
+    item87:
+    - Netherrack
+    - Netherwrack
+    - Netherstone
+    - Red Mossy Cobblestone
+    - Nether
+    - Netherrock
+    - Bloodstone
+    item88:
+    - Soul Sand
+    - Soul Mud
+    - Soul Dirt
+    - Quick Sand
+    - Nether Dirt
+    item89:
+    - Glowstone
+    - Brittle Gold
+    - Light Stone
+    - Glow Rock
+    - Glowing Rock
+    - Glowstone Block
+    item90:
+    - Portal
+    - Nether Portal
+    item91:
+    - Jack-o-lantern
+    - Jack 'o' Latern
+    - Lit Pumpkin
+    - Jack
+    - Pumpkin Light
+    - Water Latern
+    item92:
+    - Cake Block
+    - Cake
+    item93: Unlit Redstone Repeater Block
+    item94:
+    - Redstone Repeater Block
+    - Repeater
+    - Redstone Repeater
+    item95: Locked Chest
+    item96: Trapdoor
+    item97: Monster Egg
+    item98: Stone Bricks
+    item99: Huge Mushroom
+    item100: Huge Toadstool
+    item101: Iron Bars
+    item102: Glass Pane
+    item103: Melon
+    item106: Vines
+    item107: Fence Gate
+    item108: Brick Stairs
+    item109: Stone Brick Stairs
+    item110: Mycelium
+    item111:
+    - Lily Pad
+    - Lily
+    item112: Nether Brick
+    item113: Nether Brick Fence
+    item114: Nether Brick Stairs
+    item115: Nether Wart Block
+    item116: Enchantment Table
+    item117: Brewing Stand Block
+    item118:
+    - Cauldron block
+    - Cauldron
+    item119: End Portal
+    item120: End Portal Frame
+    item121: End Stone
+    item122: Dragon Egg
+    item123: Inactive Redstone Lamp
+    item123:
+    - Redstone Lamp
+    - Lamp
+    item125: Wooden Double Slab
+    item126: Wooden Slab
+    item128: Sandstone Stairs
+    item129: Emerald Ore
+    item130: Ender Chest
+    item131: Tripwire Hook
+    item133:
+    - Emerald Block
+    - Block of Emerald
+    item134: Spruce Wood Stairs
+    item135: Birch Wood Stairs
+    item136: Jungle Wood Stairs
+    item138:
+    - Beacon Block
+    - Beacon
+    item256: Iron Shovel
+    item257:
+    - Iron Pickaxe
+    - Iron Pick
+    item258: Iron Axe
+    item259:
+    - Flint and Steel
+    - Flint
+    item260:
+    - Apple
+    - Fruit
+    item261: Bow
+    item262: Arrow
+    item263: Coal
+    item264: Diamond
+    item265:
+    - Iron Ingot
+    - Iron
+    item266:
+    - Gold Ingot
+    - Gold
+    item267: Iron Sword
+    item268:
+    - Wooden Sword
+    - Wood Sword
+    item269:
+    - Wooden Shovel
+    - Wood Shovel
+    item270:
+    - Wooden Pickaxe
+    - Wood Pickaxe
+    - Wooden Pick
+    - Wood Pick
+    item271:
+    - Wooden Axe
+    - Wood Axe
+    item272: Stone Sword
+    item273: Stone Shovel
+    item274:
+    - Stone Pickaxe
+    - Stone Pick
+    item275: Stone Axe
+    item276: Diamond Sword
+    item277: Diamond Shovel
+    item278:
+    - Diamond Pickaxe
+    - Diamond Pick
+    item279: Diamond Axe
+    item280: Stick
+    item281: Bowl
+    item282:
+    - Mushroom Stew
+    - Mushroom Soup
+    - Soup
+    - Stew
+    - Bowl with Soup
+    - Bowl with Stew
+    item283:
+    - Golden Sword
+    - Gold Sword
+    item284:
+    - Golden Shovel
+    - Gold Shovel
+    item285:
+    - Golden Pickaxe
+    - Gold Pickaxe
+    - Golden Pick
+    - Gold Pick
+    item286:
+    - Golden Axe
+    - Gold Axe
+    item287: String
+    item288: Feather
+    item289: Gunpowder
+    item290: Wooden Hoe
+    item291: Stone Hoe
+    item292: Iron Hoe
+    item293: Diamond Hoe
+    item294: Golden Hoe
+    item295: Seeds
+    item296: Wheat
+    item297:
+    - Bread
+    - Loaf
+    - Bread Loaf
+    item298:
+    - Leather Cap
+    - Leather Helmet
+    item299:
+    - Leather Tunic
+    - Leather Chestplate
+    - Leather Chest
+    item300:
+    - Leather Pants
+    - Leather Leggings
+    item301: Leather Boots
+    item302:
+    - Chainmail Helmet
+    - Chain Helmet
+    item303:
+    - Chainmail Chestplate
+    - Chain Chestplate
+    - Chain Chest
+    item304:
+    - Chainmail Leggings
+    - Chain Leggings
+    item305:
+    - Chainmail Boots
+    - Chain Boots
+    item306: Iron Helmet
+    item307:
+    - Iron Chestplate
+    - Iron Chest
+    item308: Iron Leggings
+    item309: Iron Boots
+    item310: Diamond Helmet
+    item311:
+    - Diamond Chestplate
+    - Diamond Chest
+    item312: Diamond Leggings
+    item313: Diamond Boots
+    item314: Gold Helmet
+    item315:
+    - Gold Chestplate
+    - Gold Chest
+    item316: Gold Leggings
+    item317: Gold Boots
+    item318: Flint
+    item319:
+    - Raw Porkchop
+    - Raw Pork
+    item320:
+    - Cooked Porkchop
+    - Grilled Porkchop
+    - Roasted Porkchop
+    - Porkchop
+    - Pork
+    - Cooked Pork
+    - Grilled Pork
+    - Roasted Pork
+    item321: Painting
+    item322:
+    - Golden Apple
+    - Gold Apple
+    - Golden Fruit
+    - Gold Fruit
+    item323: Sign
+    item324: Wooden Door
+    item325:
+    - Bucket
+    - Empty Bucket
+    item326:
+    - Water Bucket
+    - Bucket of Water
+    item327:
+    - Lava Bucket
+    - Bucket of Lava
+    item328:
+    - Minecart
+    - Cart
+    - Train
+    - Traincar
+    item329: Saddle
+    item330: Iron door
+    item331:
+    - Redstone Dust
+    - Redstone
+    item332: Snowball
+    item333:
+    - Boat
+    - Ocean Cruiser
+    - Ship
+    - Submarine
+    - Raft
+    item334:
+    - Leather
+    - Skin
+    - Pelt
+    item335:
+    - Milk
+    - Milk Bucket
+    - Bucker of Milk
+    item336:
+    - Brick
+    - Clay Brick
+    item337:
+    - Clay
+    - Clay Balls
+    item338:
+    - Sugar Canes
+    - Reed
+    - Reeds
+    item339:
+    - Paper
+    - Papyrus
+    item340: Book
+    item341:
+    - Slimeball
+    - Slime
+    - Slime Orb
+    item342:
+    - Minecart with Chest
+    - Chestcart
+    - Storagecart
+    item343:
+    - Minecart with Furnace
+    - Furnacecart
+    - Enginecart
+    item344: Egg
+    item345: Compass
+    item346:
+    - Fishing Rod
+    - Rod
+    - Tackle
+    item347:
+    - Clock
+    - Time
+    item348: Glowstone Dust
+    item349:
+    - Raw Fish
+    - Fish
+    item350:
+    - Cooked Fish
+    - Roasted Fish
+    - Grilled Fish
+    item351: Dye
+    item352: Bone
+    item353: Sugar
+    item354: Cake
+    item355: Bed
+    item356: Redstone Repeater
+    item357: Cookie
+    item358: Map
+    item359: Shears
+    item360:
+    - Melon (Slice)
+    - Melon Slice
+    - Melon
+    item361: Pumpkin Seeds
+    item362: Melon Seeds
+    item363:
+    - Raw Beef
+    - Raw Steak
+    item364:
+    - Steak
+    - Cooked Steak
+    - Grilled Steak
+    - Roasted Steak
+    item365: Raw Chicken
+    item366:
+    - Chicken
+    - Cooked Chicken
+    - Grilled Chicken
+    - Roasted Chicken
+    item367: Rotten Flesh
+    item368: Ender Pearl
+    item369: Blaze Rod
+    item370: Ghast Tear
+    item371: Gold Nugget
+    item372: Nether Wart
+    item373: Potion
+    item374: Glass Bottle
+    item375: Spider Eye
+    item376: Fermented Spider eye
+    item377: Blaze Powder
+    item378: Magma Cream
+    item379: Brewing Stand
+    item380: Cauldron
+    item381: Eye of Ender
+    item382: Glistering Melon
+    item383: Spawn Egg
+    item384: Bottle o' Enchanting
+    item385: Fire Charge
+    item386: Book and Quill
+    item387: Written Book
+    item388: Emerald
+    item2256: 13 Disc
+    item2257: Cat Disc
+    item2258: blocks Disc
+    item2259: chirp Disc
+    item2260: far Disc
+    item2261: mall Disc
+    item2262: mellohi Disc
+    item2263: stal Disc
+    item2264: strad Disc
+    item2265: ward Disc
+    item2266: 11 Disc
+types:
+    item5:
+        type0:
+        - Oak Wood Plank
+        type1:
+        - Pine Wood Plank
+        - Spruce Wood Plank
+        type2:
+        - Birch Wood Plank
+        type3:
+        - Jungle Wood Plank
+    item6:
+        type0:
+        - Oak Sapling
+        type1:
+        - Pine Sapling
+        - Spruce Sapling
+        type2:
+        - Birch Sapling
+        type3:
+        - Jungle Sapling
+        type4:
+        - Jungle Sapling (dropless)
+    item17:
+        type0:
+        - Oak Log
+        type1:
+        - Pine Log
+        - Spruce Log
+        type2:
+        - Birch Log
+        type3:
+        - Jungle Log
+    item18:
+        type0:
+        - Oak Leaves
+        type1:
+        - Pine Leaves
+        - Spruce Leaves
+        type2:
+        - Birch Leaves
+        type3:
+        - Jungle Leaves
+    item24:
+        type0:
+        - Normal
+        type1:
+        - Hieroglyphic
+        - Creeper
+        type2:
+        - Smooth
+    item35:
+        type0:
+        - White Wool
+        type1:
+        - Orange Wool
+        type2:
+        - Magenta Wool
+        - Light Purple Wool
+        type3:
+        - Light Blue Wool
+        - Blue Wool
+        type4:
+        - Yellow Wool
+        - Dandelion Wool
+        type5:
+        - Lime Wool
+        - Light Green Wool
+        type6:
+        - Pink Wool
+        - Lightred Wool
+        type7:
+        - Gray Wool
+        - Grey Wool
+        - Dark Grey Wool
+        - Dark Gray Wool
+        type8:
+        - Silver Wool
+        - Light Gray Wool
+        - Light Grey Wool
+        type9:
+        - Cyan Wool
+        type10:
+        - Purple Wool
+        - Dark Purple Wool
+        type11:
+        - Navy Wool
+        - Dark Blue Wool
+        - Lapis Wool
+        - Lazuli Wool
+        - Lapis Lazuli Wool
+        type12:
+        - Brown Wool
+        - Cocoa Wool
+        - Chocolate Wool
+        type13:
+        - Green Wool
+        - Dark Green Wool
+        - Cactus Wool
+        type14:
+        - Red Wool
+        - Dark Red Wool
+        - Rose Wool
+        type15:
+        - Black Wool
+    item43:
+        type0:
+        - Stone Double Slabs
+        type1:
+        - Sandstone Double Slabs
+        type2:
+        - Wood Stone Double Slabs
+        - Wooden Stone Double Slabs
+        type3:
+        - Cobble Double Slabs
+        - Cobblestone Double Slabs
+        type4:
+        - Brick Double Slabs
+        type5:
+        - Stone Brick Double Slabs
+    item44:
+        type0:
+        - Stone Slabs
+        type1:
+        - Sandstone Slabs
+        type2:
+        - Wood Stone Slabs
+        - Wooden Stone Slabs
+        type3:
+        - Cobble Slabs
+        - Cobblestone Slabs
+        type4:
+        - Brick Slabs
+        type5:
+        - Stone Brick Slabs
+    item52:
+        type0:
+        - Pig Mob Spawner
+        type1:
+        - Chicken Mob Spawner
+        - Duck Mob Spawner
+        type2:
+        - Cow Mob Spawner
+        type3:
+        - Sheep Mob Spawner
+        type4:
+        - Squid Mob Spawner
+        type5:
+        - Creeper Mob Spawner
+        type6:
+        - Ghast Mob Spawner
+        - Nether Squid Mob Spawner
+        type7:
+        - Pig Zombie Mob Spawner
+        - Zombie Pigman Mob Spawner
+        type8:
+        - Skeleton Mob Spawner
+        type9:
+        - Spider Mob Spawner
+        type10:
+        - Zombie Mob Spawner
+        type11:
+        - Slime Mob Spawner
+        type12:
+        - Giant Mob Spawner
+        - Giant Zombie Mob Spawner
+        - Zombie Giant Mob Spawner
+        - Big Zombie Mob Spawner
+        type13:
+        - Human Mob Spawner
+        - Monster Mob Spawner
+        type14:
+        - Enderman Mob Spawner
+    item98:
+        type0:
+        - Normal
+        type1:
+        - Mossy
+        type2:
+        - Cracked
+        type3:
+        - Circle
+    item125:
+        type0:
+        - Wood Double Slabs
+        - Wooden Double Slabs
+        - Oak Wood Double Slabs
+        - Oak Wooden Double Slabs
+        type1:
+        - Spruce Wood Double Slabs
+        - Spruce Wooden Double Slabs
+        type3:
+        - Birch Wood Double Slabs
+        - Birch Wooden Double Slabs
+        type4:
+        - Jungle Wood Double Slabs
+        - Jungle Wooden Double Slabs
+    item126:
+        type0:
+        - Wood Slabs
+        - Wooden Slabs
+        - Oak Wood Slabs
+        - Oak Wooden Slabs
+        type1:
+        - Spruce Wood Slabs
+        - Spruce Wooden Slabs
+        type3:
+        - Birch Wood Slabs
+        - Birch Wooden Slabs
+        type4:
+        - Jungle Wood Slabs
+        - Jungle Wooden Slabs
+    item263:
+        type0:
+        - Coal
+        type1:
+        - Charcoal
+    item351:
+        type0:
+        - Ink Sac
+        - Black Dye
+        type1:
+        - Rose Red
+        - Red Dye
+        - Dark Red Dye
+        type2:
+        - Cactus Green
+        - Green Dye
+        - Darkgreen Dye
+        type3:
+        - Cocoa Beans
+        - Brown Dye
+        type4:
+        - Lapis Lazuli
+        - Darkblue Blye
+        type5:
+        - Purple Dye
+        - Darkpurple Dye
+        type6:
+        - Cyan Dye
+        type7:
+        - Light Gray Dye
+        - Light Grey Dye
+        type8:
+        - Gray Dye
+        - Grey Dye
+        - Dark Grey Dye
+        - Dark Gray Dye
+        type9:
+        - Pink Dye
+        - Light Red Dye
+        type10:
+        - Lime Dye
+        - Light Green Dye
+        type11:
+        - Dandelion Yellow
+        - Yellow Dye
+        type12:
+        - Light Blue Dye
+        - Blue Dye
+        type13:
+        - Magenta Dye
+        - Light Purple Dye
+        type14:
+        - Orange Dye
+        type15:
+        - Bone Meal
+        - White Dye
+    item373:
+        type0:
+        - Water Bottle
+        type16:
+        - Akward Potion
+        type32:
+        - Thick Potion
+        type64:
+        - Mundane Potion
+        type8193:
+        - Regeneration Potion (0:45)
+        type8194:
+        - Swiftness Potion (3:00)
+        type8195:
+        - Fire Resistance Potion (3:00)
+        type8196:
+        - Poison Potion (0:45)
+        type8197:
+        - Healing Potion
+        type8200:
+        - Weakness Potion (1:30)
+        type8201:
+        - Strength Potion (3:00)
+        type8202:
+        - Slowness Potion (1:30)
+        type8204:
+        - Potion of Harming
+        type8225:
+        - Regeneration Potion II (0:22)
+        type8226:
+        - Swiftness Potion II (1:30)
+        type8228:
+        - Poison Potion II (0:22)
+        type8229:
+        - Healing Potion II
+        type8233:
+        - Strength Potion II (1:30)
+        type8236:
+        - Harming Potion II
+        type8257:
+        - Regeneration Potion (2:00)
+        type8258:
+        - Swiftness Potion (8:00)
+        type8259:
+        - Fire Resistance Potion (8:00)
+        type8260:
+        - Poison Potion (2:00)
+        type8264:
+        - Weakness Potion (4:00)
+        type8265:
+        - Strength Potion (8:00)
+        type8266:
+        - Slowness Potion (4:00)
+        type16385:
+        - Regeneration Splash (0:33)
+        type16386:
+        - Swiftness Splash (2:15)
+        type16387:
+        - Fire Resistance Splash (2:15)
+        type16388:
+        - Poison Splash (0:33)
+        type16389:
+        - Healing Splash
+        type16392:
+        - Weakness Splash (1:07)
+        type16393:
+        - Strength Splash (2:15)
+        type16394:
+        - Slowness Splash (1:07)
+        type16396:
+        - Harming Splash
+        type16418:
+        - Swiftness Splash II (1:07)
+        type16420:
+        - Poison Splash II (0:16)
+        type16421:
+        - Healing Splash II
+        type16425:
+        - Strength Splash II (1:07)
+        type16428:
+        - Harming Splash II
+        type16449:
+        - Regeneration Splash (1:30)
+        type16450:
+        - Swiftness Splash (6:00)
+        type16451:
+        - Fire Resistance Splash (6:00)
+        type16452:
+        - Poison Splash (1:30)
+        type16456:
+        - Weakness Splash (3:00)
+        type16457:
+        - Strength Splash (6:00)
+        type16458:
+        - Slowness Splash (3:00)
+        type16471:
+        - Regeneration Splash II (0:16)
+    item383:
+        type50:
+        - Creeper Egg
+        type51:
+        - Skeleton Egg
+        type52:
+        - Spider Egg
+        type54:
+        - Zombie Egg
+        type55:
+        - Slime Egg
+        type56:
+        - Ghast Egg
+        type57:
+        - Zombie Pigman Egg
+        type58:
+        - Enderman Egg
+        type59:
+        - Cave Spider Egg
+        type60:
+        - Silverfish Egg
+        type61:
+        - Blaze Egg
+        type62:
+        - Magma Cube Egg
+        type90:
+        - Pig Egg
+        type91:
+        - Sheep Egg
+        type92:
+        - Cow Egg
+        type93:
+        - Chicken Egg
+        type94:
+        - Squid Egg
+        type95:
+        - Wolf Egg
+        type96:
+        - Mooshroom Egg
+        type98:
+        - Ocelot Egg
+        type120:
+        - Villager Egg

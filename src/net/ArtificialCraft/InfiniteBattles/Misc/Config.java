@@ -1,14 +1,13 @@
 package net.ArtificialCraft.InfiniteBattles.Misc;
 
-import net.ArtificialCraft.InfiniteBattles.Entities.Contestant.Contestant;
 import net.ArtificialCraft.InfiniteBattles.Entities.Arena.Arena;
 import net.ArtificialCraft.InfiniteBattles.Entities.Arena.ArenaHandler;
+import net.ArtificialCraft.InfiniteBattles.Entities.Contestant.Contestant;
 import net.ArtificialCraft.InfiniteBattles.IBattle;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.*;
-import java.util.HashMap;
 
 /**
  * Enclosed in project ArtificialIntelligence for Aurora Enterprise.
@@ -81,7 +80,7 @@ public class Config{
 		}
 
 		if(!config.contains("rolepicker") && !config.contains("invpicker")){
-			Util.broadcast("what the fuckkkkk");
+			Util.broadcast("DUDE SET ROLEPICKER AND INVPICEKR AGAINFASDF SDF SDFSDFSD");
 		}
 		try{
 			config.save(configFile);
@@ -91,24 +90,29 @@ public class Config{
 	}
 
 	public static void loadArenas(){
-		HashMap<String, Arena> arenas = new HashMap<String, Arena>();
 		if(config.getConfigurationSection("Arenas") == null){
-			Util.debug("null");
+			Util.debug("No arenas found!");
 			return;
 		}
 		for(String key : config.getConfigurationSection("Arenas").getKeys(false)){
 			Arena a = Formatter.parseArena(config.getString("Arenas." + key));
-			arenas.put(key, a);
+			ArenaHandler.addUnusedArena(a);
 		}
-		IBattle.getArenas().putAll(arenas);
-		ArenaHandler.getUnusedArenas().putAll(arenas);
-		Util.debug(IBattle.getArenas().size() + "         dsdfsdfsdf         " + ArenaHandler.getUnusedArenas().size());
+		Util.debug(ArenaHandler.getUnusedArenas().size() + " arenas loaded!");
+		IBattle.setRolepicker(Formatter.parseLoc(config.getString("rolepicker")));
+		IBattle.setInvpicker(Formatter.parseLoc(config.getString("invpicker")));
 	}
 
 	public static void addArena(Arena a){
 		String name = a.getName();
 		config.set("Arenas." + name, a.toString());
 		ArenaHandler.addUnusedArena(a);
+		Config.saveYamls();
+	}
+
+	public static void saveArena(Arena a){
+		String name = a.getName();
+		config.set("Arenas." + name, a.toString());
 		Config.saveYamls();
 	}
 

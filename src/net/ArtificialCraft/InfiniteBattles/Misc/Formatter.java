@@ -1,8 +1,9 @@
 package net.ArtificialCraft.InfiniteBattles.Misc;
 
-import net.ArtificialCraft.InfiniteBattles.Entities.Contestant.Contestant;
 import net.ArtificialCraft.InfiniteBattles.Entities.Arena.Arena;
+import net.ArtificialCraft.InfiniteBattles.Entities.Arena.LocationType;
 import net.ArtificialCraft.InfiniteBattles.Entities.Battles.BattleType;
+import net.ArtificialCraft.InfiniteBattles.Entities.Contestant.Contestant;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
@@ -39,41 +40,48 @@ public class Formatter{
 	}
 
 	public static Arena parseArena(String s){
-		String name = null;
-		Location bluespawn, redspawn, greenspawn, purplespawn, spectatorspawn, pitstop, pastepoint;
-		BattleType unique = null;
-		String[] peices = s.split("!");
-		String[] info = peices[0].split(",");
-		String[] locs = peices[1].split(",");
-		name = info[0];
-		if(!info[1].equalsIgnoreCase("null")){
+		String[] parts = s.split("!");
+		BattleType type = null;
+		String name = parts[0];
+		if(!parts[1].equalsIgnoreCase("null")){
 			try{
-				unique = BattleType.valueOf(info[2]);
-			}catch(IllegalArgumentException x){}
+				type = BattleType.valueOf(parts[1]);
+			}catch(Exception e){}
 		}
-		bluespawn = parseLoc(locs[0]);
-		redspawn = parseLoc(locs[1]);
-		greenspawn = parseLoc(locs[2]);
-		purplespawn = parseLoc(locs[3]);
-		spectatorspawn = parseLoc(locs[4]);
-		pitstop = parseLoc(locs[5]);
-		Arena a = new Arena(name, bluespawn, redspawn, greenspawn, purplespawn, spectatorspawn, pitstop);
-		if(unique != null)
-			a.setUnique(unique);
-		return a;
+		HashMap<LocationType, Location> spawns = new HashMap<LocationType, Location>();
+		for(int c = 2; c < parts.length; c++){
+			String[] toparse = parts[c].split(",");
+			LocationType ltype;
+			try{
+				ltype = LocationType.valueOf(toparse[0]);
+				Location loc = parseLoc(toparse[1]);
+				if(loc != null)
+					spawns.put(ltype, loc);
+			}catch(Exception e){
+				Util.debug(parts[c] + " IS INVALID!!! - IBattle:Formatter.java:60");
+			}
+		}
+		return new Arena(name, spawns, type);
 	}
 
 	public static String configLoc(Location l){
-		return l.getX() + "|" + l.getY() + "|" + l.getZ();
+		return l.getX() + "|" + l.getY() + "|" + l.getZ() + "|" + l.getYaw() + "|" + l.getPitch();
 	}
 
 	public static Location parseLoc(String l){
+		if(!l.contains("|")){
+			return null;
+		}
 		String[] locs = l.split("\\|");
 		try{
 			double x = Double.parseDouble(locs[0]);
 			double y = Double.parseDouble(locs[1]);
 			double z = Double.parseDouble(locs[2]);
-			return new Location(Bukkit.getServer().getWorld("Warfare"), x, y, z);
+			if(locs.length == 3)
+				return new Location(Bukkit.getServer().getWorld("Warfare"), x, y, z);
+			float yaw = Float.parseFloat(locs[3]);
+			float pitch = Float.parseFloat(locs[4]);
+			return new Location(Bukkit.getServer().getWorld("Warfare"), x, y, z, yaw, pitch);
 		}catch(NumberFormatException ex){
 			return null;
 		}

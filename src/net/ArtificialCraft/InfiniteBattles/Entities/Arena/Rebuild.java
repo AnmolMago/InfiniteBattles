@@ -24,7 +24,7 @@ public class Rebuild implements Listener{
 	private WorldEditPlugin WorldEdit;
 
 	public static void rebuild(final Arena a){
-		Bukkit.getScheduler().runTaskAsynchronously(IBattle.getPlugin(), new Runnable(){
+		Bukkit.getScheduler().runTask(IBattle.getPlugin(), new Runnable(){
 			@Override
 			public void run(){
 				try{
@@ -39,7 +39,7 @@ public class Rebuild implements Listener{
 	}
 
 	private static void pasteArena(Arena a) throws DataException, IOException, MaxChangedBlocksException{
-		EditSession es = new EditSession(new BukkitWorld(a.getFirstSpawn().getWorld()), Integer.MAX_VALUE);
+		EditSession es = new EditSession(new BukkitWorld(a.getLocations().get(0).getWorld()), Integer.MAX_VALUE);
 		@SuppressWarnings("deprecation") CuboidClipboard cc = CuboidClipboard.loadSchematic(new File(IBattle.getPlugin().getDataFolder(), a.getName().toLowerCase() + ".schematic"));
 		//Location l = a.getPastepoint();
 		//cc.paste(es, new Vector(l.getBlockX(), l.getBlockY(), l.getBlockZ()), false);

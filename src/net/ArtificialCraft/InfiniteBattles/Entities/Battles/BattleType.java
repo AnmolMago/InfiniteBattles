@@ -1,5 +1,8 @@
 package net.ArtificialCraft.InfiniteBattles.Entities.Battles;
 
+import net.ArtificialCraft.InfiniteBattles.Entities.Arena.LocationType;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -10,23 +13,38 @@ import java.util.List;
  */
 public enum BattleType{
 
-	Boat_Wars(2, new String[]{"boats", "boatwar", "boatwars"}),
-	Capture_The_Flag(3, new String[]{"ctf", "flag", "capture"}),
-	Cars(1, new String[]{"cars", "carwar"}),
-	Duck_Hunt(1, new String[]{"duckhunt", "dh", "duck"}),//done
-	Free_For_All(3, new String[]{"freeforall", "ffa"}),//done
-	Infection(999, new String[]{"infection", "infect", "zombie"}),
-	InvPick(3, new String[]{"invpick", "inv", "chooseinv"}),
-	PaintBall(3, new String[]{"paintball", "paint"}),
-	Role_Play(3, new String[]{"rp", "roleplay"}),//done
-	Spleef(1, new String[]{"spleef"});//done
+	Capture_The_Flag(0, Arrays.asList("ctf", "flag", "capture"), Arrays.asList(LocationType.first, LocationType.second, LocationType.redflag, LocationType.blueflag)),
+	Duck_Hunt(0, Arrays.asList("duckhunt", "dh", "duck"), true),//done
+	Free_For_All(3, Arrays.asList("freeforall", "ffa", "normal", "default")),//done
+	Infection(0, Arrays.asList("infection", "infect", "zombie"), Arrays.asList(LocationType.first, LocationType.second)),
+	InvPick(3, Arrays.asList("invpick", "inv", "chooseinv")),
+	PaintBall(0, Arrays.asList("paintball", "paint", "pb", "pball"), Arrays.asList(LocationType.first, LocationType.second)),
+	Role_Play(3, Arrays.asList("rp", "roleplay")),//done
+	Spleef(0, Arrays.asList("spleef"), true);//done
 
 	public int lives = 1;
 	public List<String> aliases;
+	public List<LocationType> locations;
+	public boolean unique;
 
-	private BattleType(int lives, String[] aliases){
-		this.aliases = Arrays.asList(aliases);
+	private BattleType(int lives, List<String> aliases){
+		this(lives, aliases, false);
+	}
+
+	private BattleType(int lives, List<String> aliases, boolean unique){
+		this.aliases = aliases;
 		this.lives = lives;
+		this.locations = new ArrayList<LocationType>(Arrays.asList(LocationType.first, LocationType.second, LocationType.third, LocationType.fourth, LocationType.pitstop, LocationType.spectator));
+		this.unique = unique;
+	}
+
+	private BattleType(int lives, List<String> aliases, List<LocationType> locations){
+		this.aliases = aliases;
+		this.lives = lives;
+		this.locations = new ArrayList<LocationType>(locations);
+		this.locations.add(LocationType.pitstop);
+		this.locations.add(LocationType.spectator);
+		unique = true;
 	}
 
 	public List<String> getAliases(){
@@ -47,7 +65,19 @@ public enum BattleType{
 
 	public boolean isType(String s){
 		s = s.toLowerCase();
-		return aliases.contains(s);
+		return aliases.contains(s) || s.equalsIgnoreCase(name());
+	}
+
+	public static BattleType getByName(String s){
+		for(BattleType type : BattleType.values()){
+			if(type.isType(s))
+				return type;
+		}
+		return null;
+	}
+
+	public boolean isUnique(){
+		return unique;
 	}
 
 }

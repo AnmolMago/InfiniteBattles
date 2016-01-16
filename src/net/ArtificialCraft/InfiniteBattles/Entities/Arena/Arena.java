@@ -5,6 +5,7 @@ import net.ArtificialCraft.InfiniteBattles.Misc.Formatter;
 import org.bukkit.Location;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
@@ -16,96 +17,53 @@ import java.util.Random;
 public class Arena{
 
 	String name = null;
-	Location firstspawn, secondspawn, thirdspawn, fourthspawn, spectatorspawn, pitstop;
-	BattleType unique = null;
+	BattleType type = null;
+	HashMap<LocationType, Location> locations = new HashMap<LocationType, Location>();
 
-	public Arena(String name, Location firstspawn, Location secondspawn, Location thirdspawn, Location fourthspawn, Location spectatorspawn, Location pitstop){
+	public Arena(String name, HashMap<LocationType, Location> locations, BattleType type){
+		name = name.replaceAll(",", "");
 		this.name = name;
-		this.firstspawn = firstspawn;
-		this.secondspawn = secondspawn;
-		this.thirdspawn = thirdspawn;
-		this.fourthspawn = fourthspawn;
-		this.spectatorspawn = spectatorspawn;
-		this.pitstop = pitstop;
+		this.locations = locations;
+		this.type = type;
 	}
 
 	public String getName(){
 		return name;
 	}
 
-	public Location getFirstSpawn(){
-		return firstspawn;
+	public Location getLocation(LocationType type){
+		return locations.get(type);
 	}
 
-	public Location getSecondSpawn(){
-		return secondspawn;
+	public void setLocation(LocationType type, Location l){
+		locations.put(type, l);
 	}
 
-	public Location getThirdSpawn(){
-		return thirdspawn;
+	public Location getRandomLocation(){
+		return getLocations().get(new Random().nextInt(getLocations().size()));
 	}
 
-	public Location getFourthSpawn(){
-		return fourthspawn;
+	public boolean hasType(LocationType type){
+		return locations.containsKey(type);
 	}
 
-	public Location getSpectatorspawn(){
-		return spectatorspawn;
-	}
-
-	public Location getRandomSpawn(){
-		return getSpawns().get(new Random().nextInt(getSpawns().size()));
-	}
-
-	public Location getPitstop(){
-		return pitstop;
-	}
-	public void setFirstSpawn(Location spawn){
-		firstspawn = spawn;
-	}
-
-	public void setSecondSpawn(Location spawn){
-		secondspawn = spawn;
-	}
-
-	public void setThirdSpawn(Location spawn){
-		thirdspawn = spawn;
-	}
-
-	public void setFourthSpawn(Location spawn){
-		fourthspawn = spawn;
-	}
-
-	public void setPitStop(Location stop){
-		pitstop = stop;
-	}
-
-	public void setSpectatorspawn(Location spectatorspawn){
-		this.spectatorspawn = spectatorspawn;
-	}
-
-	public void setPitstop(Location pitstop){
-		this.pitstop = pitstop;
-	}
-
-	public List<Location> getSpawns(){
+	public List<Location> getLocations(){
 		List<Location> l = new ArrayList<Location>();
-		l.add(firstspawn);
-		l.add(secondspawn);
-		l.add(thirdspawn);
-		l.add(fourthspawn);
+		for(LocationType type : locations.keySet()){
+			if(!type.isSpecial())
+				l.add(locations.get(type));
+		}
 		return l;
 	}
 
-	public void setUnique(BattleType b){
-		unique = b;
-	}
-
 	public BattleType isUnique(){
-		return unique;
+		return type;
 	}
 
 	public String toString(){
-		return name + "," + (unique == null ? "null" : unique.name()) + "!" + Formatter.configLoc(firstspawn) + "," + Formatter.configLoc(secondspawn) + "," + Formatter.configLoc(thirdspawn) + "," + Formatter.configLoc(fourthspawn) + "," + Formatter.configLoc(spectatorspawn) + "," + Formatter.configLoc(pitstop);
+		String types = "";
+		for(LocationType type : locations.keySet())
+			types += "!" + type.name() + "," + Formatter.configLoc(locations.get(type));
+		return name + "!" + (type == null ? "null" : type.name()) + types ;
 	}
 }

@@ -1,13 +1,15 @@
 package net.ArtificialCraft.InfiniteBattles.Entities.Battles.BattleHandler;
 
+import net.ArtificialCraft.InfiniteBattles.Entities.Arena.LocationType;
 import net.ArtificialCraft.InfiniteBattles.Entities.Battles.Battle;
+import net.ArtificialCraft.InfiniteBattles.Entities.Battles.Status;
 import net.ArtificialCraft.InfiniteBattles.Entities.Contestant.Contestant;
 import net.ArtificialCraft.InfiniteBattles.IBattle;
-import net.ArtificialCraft.InfiniteBattles.Misc.Util;
 import net.ArtificialCraft.InfiniteBattles.ScoreBoard.ScoreboardHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -48,9 +50,6 @@ public class Infection extends IBattleHandler{
 		List<Contestant> teams = new ArrayList<Contestant>(getBattle().getContestants());
 		for(int i = 0; i < zc; i++){
 			int rand = new Random().nextInt(getBattle().getContestants().size());
-			Util.broadcast(getBattle().getContestants().size() + " | " + rand + " | " + zc);
-			for(Contestant c : getBattle().getContestants())
-				Util.broadcast(c.getName());
 			zombies.addPlayer(teams.remove(rand).getPlayer());
 		}
 
@@ -63,7 +62,6 @@ public class Infection extends IBattleHandler{
 	public void start(){
 		ItemStack head = new ItemStack(Material.DIAMOND_HELMET), chest = new ItemStack(Material.DIAMOND_CHESTPLATE), legs = new ItemStack(Material.DIAMOND_LEGGINGS), boots = new ItemStack(Material.DIAMOND_BOOTS), sword = new ItemStack(Material.IRON_SWORD), bow = new ItemStack(Material.BOW), zhead = new ItemStack(Material.IRON_HELMET), zchest = new ItemStack(Material.IRON_CHESTPLATE), zlegs = new ItemStack(Material.IRON_LEGGINGS), zboots = new ItemStack(Material.IRON_BOOTS), zsword = new ItemStack(Material.DIAMOND_SWORD);
 		sword.addEnchantment(Enchantment.DAMAGE_ALL, 1);
-		zsword.addEnchantment(Enchantment.DAMAGE_ALL, 1);
 		zsword.addEnchantment(Enchantment.KNOCKBACK, 1);
 		bow.addEnchantment(Enchantment.ARROW_INFINITE, 1);
 		for(Contestant c : getBattle().getContestants()){
@@ -72,22 +70,23 @@ public class Infection extends IBattleHandler{
 			if(zombies.hasPlayer(c.getPlayer())){
 				inv.setArmorContents(new ItemStack[]{zhead, zchest, zboots, zlegs});
 				inv.addItem(zsword, bow, new ItemStack(Material.ARROW));
-				c.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, 1), true);
-				c.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.JUMP, Integer.MAX_VALUE, 1), true);
+				c.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, 0), true);
+				c.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.JUMP, Integer.MAX_VALUE, 0), true);
 				c.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, Integer.MAX_VALUE, 0), true);
-				c.teleport(getBattle().getArena().getSecondSpawn());
+				c.teleport(getBattle().getArena().getLocation(LocationType.second));
 			}else{
 				inv.setArmorContents(new ItemStack[]{head, chest, boots, legs});
 				inv.addItem(sword, bow, new ItemStack(Material.ARROW));
-				c.teleport(getBattle().getArena().getFirstSpawn());
+				c.teleport(getBattle().getArena().getLocation(LocationType.first));
 			}
 		}
+		getBattle().setStatus(Status.Started);
 		task = Bukkit.getScheduler().runTaskLater(IBattle.getPlugin(), new Runnable(){
 			@Override
 			public void run(){
-				getBattle().end(humans);
+				getBattle().end(humans, zombies);
 			}
-		}, 100);
+		}, humans.getSize() * 1000 > 5000 ? 5000 : humans.getSize() * 1000);
 	}
 
 	@EventHandler
@@ -99,26 +98,48 @@ public class Infection extends IBattleHandler{
 			zombies.addPlayer(p);
 		}
 		if(humans.getPlayers().size() == 0){
-			getBattle().end(zombies);
+			getBattle().end(zombies, humans);
 			task.cancel();
 			return;
 		}
 		PlayerInventory inv = p.getInventory();
 		ItemStack bow = new ItemStack(Material.BOW), zhead = new ItemStack(Material.IRON_HELMET), zchest = new ItemStack(Material.IRON_CHESTPLATE), zlegs = new ItemStack(Material.IRON_LEGGINGS), zboots = new ItemStack(Material.IRON_BOOTS), zsword = new ItemStack(Material.DIAMOND_SWORD);
+		zsword.addEnchantment(Enchantment.KNOCKBACK, 1);
+		bow.addEnchantment(Enchantment.ARROW_INFINITE, 1);
 		inv.setArmorContents(new ItemStack[]{zhead, zchest, zboots, zlegs});
 		inv.addItem(zsword, bow, new ItemStack(Material.ARROW));
-		p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, 1), true);
-		p.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, Integer.MAX_VALUE, 1), true);
+		p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, 0), true);
+		p.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, Integer.MAX_VALUE, 0), true);
 		p.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, Integer.MAX_VALUE, 0), true);
-		e.setRespawnLocation(getBattle().getArena().getSecondSpawn());
+		e.setRespawnLocation(getBattle().getArena().getLocation(LocationType.second));
 	}
 
 	@EventHandler
 	public void nameTag(PlayerReceiveNameTagEvent e){
 		if(zombies.hasPlayer(e.getNamedPlayer())){
 			e.setTag(ChatColor.RED + e.getNamedPlayer().getName());
-		}else{
+		}else if(humans.hasPlayer(e.getNamedPlayer())){
 			e.setTag(ChatColor.AQUA + e.getNamedPlayer().getName());
+		}
+	}
+
+	public boolean isHuman(OfflinePlayer s){
+		return humans.getPlayers().contains(s);
+	}
+
+	public void goHome(Contestant c){
+		Player p = c.getPlayer();
+		if(humans.hasPlayer(p)){
+			humans.removePlayer(p);
+		}else{
+			zombies.removePlayer(p);
+		}
+		if(humans.getPlayers().size() == 0){
+			getBattle().end(zombies, humans);
+			task.cancel();
+		}else if(zombies.getPlayers().size() == 0){
+			getBattle().end(humans, zombies);
+			task.cancel();
 		}
 	}
 
@@ -159,12 +180,12 @@ public class Infection extends IBattleHandler{
 	@Override
 	public void start(){
 		for(Contestant c : getBattle().getContestants()){
-			c.teleport(getBattle().getArena().getRandomSpawn());
+			c.teleport(getBattle().getArena().getRandomLocation());
 		}
 	}
 
 	@EventHandler
-	public void onDeath(PlayerDeathEvent e){
+	public void onDeath2(PlayerDeathEvent e){
 		if(!isBattleEvent(e)){return;}
 		getBattle().onContestantDeath(e.getEntity());
 		if(getBattle().getContestants().size() == 1)

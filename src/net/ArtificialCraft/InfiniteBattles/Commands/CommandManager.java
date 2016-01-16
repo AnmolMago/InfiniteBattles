@@ -4,8 +4,7 @@ import net.ArtificialCraft.InfiniteBattles.Collections.IError;
 import net.ArtificialCraft.InfiniteBattles.Misc.Util;
 import org.bukkit.command.CommandSender;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.HashMap;
 
 /**
  * Enclosed in project InfiniteBattles for Aurora Enterprise.
@@ -14,49 +13,27 @@ import java.util.List;
  */
 public class CommandManager{
 
+	public static HashMap<String, ICommand> cmds = new HashMap<String, ICommand>();
+	private static boolean init = false;
+
+	public static void init(){
+		init = true;
+		cmds.put("ibattle", new BattleCommand());
+		cmds.put("iarena", new ArenaCommand());
+		cmds.put("contestant", new ContestantCommand());
+		cmds.put("spectate", new SpectateCommand());
+	}
+
 	public static void execute(CommandSender sender, String cmd, String[] args){
-		ICommand exec = null;
-		for(Commands c : Commands.values()){
-			if(c.isCmd(cmd)){
-				exec = c.getExec();
-				break;
-			}
-		}
-		if(exec != null){
-			String s = exec.execute(sender, args);
+		if(!init)
+			init();
+		cmd = cmd.toLowerCase();
+		if(cmds.containsKey(cmd)){
+			String s = cmds.get(cmd).execute(sender, args);
 			if(s != null)
 				Util.error(sender, s);
 		}else{
-			Util.error(sender, IError.invalidCommand);
-		}
-	}
-
-	public enum Commands{
-
-		battle("ibattle", new BattleCommand(), new String[]{"infinitebattle", "infinitebattles"}),
-		contestant("status", new ContestantCommand(), new String[]{"contestant"});
-
-		String cmd;
-		ICommand exec;
-		List<String> aliases = null;
-
-		Commands(String cmd, ICommand exec){
-			this.cmd = cmd;
-			this.exec = exec;
-		}
-
-		Commands(String cmd, ICommand exec, String[] aliases){
-			this.cmd = cmd;
-			this.exec = exec;
-			this.aliases = Arrays.asList(aliases);
-		}
-
-		public ICommand getExec(){
-			return exec;
-		}
-
-		public boolean isCmd(String s){
-			return cmd.equalsIgnoreCase(s) || aliases.contains(s);
+			Util.error(sender, IError.invalidCommand + " | " + cmd);
 		}
 	}
 }

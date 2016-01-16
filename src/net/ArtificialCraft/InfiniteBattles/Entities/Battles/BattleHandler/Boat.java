@@ -93,9 +93,6 @@ public class Boat extends IBattleHandler{
 			e.setDamage(100);
 			damage.remove(name);
 			p.setHealth(0);
-			getBattle().onContestantDeath(p);
-			if(e.getAttacker() instanceof Player)
-				((Player)e.getAttacker()).sendMessage(ChatColor.RED + "you have just killed " + p.getName());
 		}else{
 			damage.put(name, damage.get(name) + 1);
 			e.setCancelled(true);
@@ -105,7 +102,8 @@ public class Boat extends IBattleHandler{
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onVehicleEnter(VehicleEnterEvent e){
 		if(!isBattleEvent(e)){return;}
-		e.getVehicle().teleport(getBattle().getArena().getRandomSpawn());
+		if(!getBattle().isStarted())
+			e.getVehicle().teleport(getBattle().getArena().getRandomLocation());
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)

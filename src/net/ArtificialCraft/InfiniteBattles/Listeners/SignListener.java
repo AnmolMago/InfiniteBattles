@@ -32,10 +32,10 @@ public class SignListener implements Listener{
 				return;
 			}
 			if(s.getLine(0).equalsIgnoreCase("{FORCE START}")){
-				if(b.getTime() + 120000 > System.currentTimeMillis()){
+				if(b.getTime() + 120000 < System.currentTimeMillis()){
 					b.getHandler().start();
 				}else{
-					Util.error(p, "You still have to wait " + Formatter.formatTimeSpan(System.currentTimeMillis() - (b.getTime() + 120000)) + " before you can force start!");
+					Util.error(p, "You still have to wait " + Formatter.formatTimeSpan((b.getTime() + 120000) - System.currentTimeMillis()) + " before you can force start!");
 				}
 			}
 		}

@@ -13,19 +13,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
+import java.util.regex.Pattern;
 
 public class Items{
 
 	private IBattle plugin = IBattle.getPlugin();
 	private YamlConfiguration items;
+	private double itemVersion = 0.7;
 	private HashMap<ItemID, String> itemsByID = new HashMap<ItemID, String>();
 	private HashMap<String, ItemID> itemsByName = new HashMap<String, ItemID>();
 	private HashMap<ItemID, List<String>> itemTypes = new HashMap<ItemID, List<String>>();
 	private HashMap<String, ItemID> itemsAliases = new HashMap<String, ItemID>();
 
-	private List<Integer> getTypeList(int id){
+	private List<Integer> getTypeList(int id) {
 		List<Integer> types = new ArrayList<Integer>();
-		for(Map.Entry<ItemID, List<String>> entry : itemTypes.entrySet()){
+		for(Map.Entry<ItemID, List<String>> entry : itemTypes.entrySet()) {
 			ItemID key = entry.getKey();
 			if(key.getId() == id)
 				types.add(key.getType());
@@ -34,132 +36,131 @@ public class Items{
 		return types;
 	}
 
-	public Items(){
+	public Items() {
 		File itemsFile = new File(plugin.getDataFolder(), "items.yml");
-		if(!itemsFile.exists()){
-			Util.debug(Level.INFO, "Extracting new items.yml file...");
-			try{
-				itemsFile.getParentFile().mkdirs();
-				Config.copy(plugin.getResource("items.yml"), itemsFile);
-			}catch(Exception ex){
-				ex.printStackTrace();
-			}
+		if(!itemsFile.exists()) {
+			Util.debug(Level.INFO, "[" + plugin.getName() + "] Extracting new items.yml file...");
+			Config.copy(plugin.getResource("items.yml"), itemsFile);
 		}
 
 		items = YamlConfiguration.loadConfiguration(itemsFile);
 		double v = items.getDouble("version");
+		if(v < this.itemVersion) {
+			Util.debug(Level.INFO, "[" + plugin.getName() + "] Your items.yml has ran out of date. Updating now!");
+			File oItemsFile = new File(plugin.getDataFolder(), "items.yml." + v + ".bak");
+			itemsFile.renameTo(oItemsFile);
+			Config.copy(plugin.getResource("items.yml"), itemsFile);
+			items = YamlConfiguration.loadConfiguration(itemsFile);
+		}
 
 		loadNames();
 		loadTypes();
-		loadAliases();
 	}
 
-	public final void loadNames(){
+	public final void loadNames() {
 		Set<String> list = items.getConfigurationSection("names").getKeys(false);
-		if(list == null){
-			plugin.getLogger().log(Level.INFO, "There are no item names specified in the items.yml file?!");
+		if(list == null) {
+			Util.debug(Level.INFO, "[" + plugin.getName() + "] There are no item names specified in the items.yml file?!");
 			return;
 		}
 
-		for(String item : list){
+		for(String item : list) {
 			int id;
-			try{
+			try {
 				id = Integer.valueOf(item.substring(4));
-			}catch(NumberFormatException x){
-				plugin.getLogger().log(Level.WARNING, "[" + plugin.getName() + "] Invalid key detected in items.yml (names." + item + ")");
+			} catch(NumberFormatException x) {
+				Util.debug(Level.WARNING, "[" + plugin.getName() + "] Invalid key detected in items.yml (names." + item + ")");
 				continue;
 			}
 
+			List<String> names = items.getStringList("names." + item);
+			if(names.size() > 0) {
+				String name = names.get(0);
+				String namePrep = name.toLowerCase().replaceAll(" ", "_");
+				ItemID iID = new ItemID(id, null);
+				iID.setName(name);
 
-			String name = items.getString("names." + item);
-			String namePrep = name.toLowerCase().replaceAll(" ", "_");
-			ItemID key = new ItemID(id, null);
-			itemsByID.put(key, name);
-			itemsByName.put(namePrep, key);
+				itemsByID.put(iID, name);
+				itemsByName.put(namePrep, iID);
+
+				for(int i = 1; i < names.size(); i++) {
+					itemsAliases.put(names.get(i).toLowerCase().replaceAll(" ", "_"), iID);
+				}
+			}else{
+				String name = items.getString("names." + item);
+				String namePrep = name.toLowerCase().replaceAll(" ", "_");
+				ItemID iID = new ItemID(id, null);
+				iID.setName(name);
+
+				itemsByID.put(iID, name);
+				itemsByName.put(namePrep, iID);
+			}
 		}
 	}
 
-	public final void loadTypes(){
+	public final void loadTypes() {
 		Set<String> list = items.getConfigurationSection("types").getKeys(false);
-		if(list == null){
-			plugin.getLogger().log(Level.INFO, "[" + plugin.getName() + "] There are no item types specified in the items.yml file?!");
+		if(list == null) {
+			Util.debug(Level.INFO, "[" + plugin.getName() + "] There are no item types specified in the items.yml file?!");
 			return;
 		}
 
-		for(String item : list){
+		for(String item : list) {
 			int itemID;
 
-			try{
+			try {
 				itemID = Integer.valueOf(item.substring(4));
-			}catch(NumberFormatException x){
-				plugin.getLogger().log(Level.WARNING, "[" + plugin.getName() + "] Invalid key detected in items.yml (types." + item + ")");
+			} catch(NumberFormatException x) {
+				Util.debug(Level.WARNING, "[" + plugin.getName() + "] Invalid key detected in items.yml (types." + item + ")");
 				continue;
 			}
 
 			Set<String> types = items.getConfigurationSection("types." + item).getKeys(false);
-			for(String type : types){
+			for(String type : types) {
 				int typeID;
-				try{
+				try {
 					typeID = Integer.valueOf(type.substring(4));
-				}catch(NumberFormatException x){
-					plugin.getLogger().log(Level.WARNING, "[" + plugin.getName() + "] Invalid key detected in items.yml (types." + item + "." + type + ")");
+				} catch(NumberFormatException x) {
+					Util.debug(Level.WARNING, "[" + plugin.getName() + "] Invalid key detected in items.yml (types." + item + "." + type + ")");
 					continue;
 				}
 
 				List<String> typeNames = items.getStringList("types." + item + "." + type);
-				if(typeNames.size() > 0){
-					ItemID el = new ItemID(itemID, typeID);
+				if(typeNames.size() > 0) {
+					ItemID iID = new ItemID(itemID, typeID);
 					String name = typeNames.get(0).toLowerCase().replaceAll(" ", "_");
-					this.itemTypes.put(el, typeNames);
-					this.itemsByID.put(el, typeNames.get(0));
-					this.itemsByName.put(name, el);
+					iID.setName(typeNames.get(0));
 
-					for(int i = 1; i < typeNames.size(); i++){
-						itemsAliases.put(typeNames.get(i).toLowerCase().replaceAll(" ", "_"), el);
+					this.itemTypes.put(iID, typeNames);
+					this.itemsByID.put(iID, typeNames.get(0));
+					this.itemsByName.put(name, iID);
+
+					for(int i = 1; i < typeNames.size(); i++) {
+						itemsAliases.put(typeNames.get(i).toLowerCase().replaceAll(" ", "_"), iID);
 					}
 				}else{
-					plugin.getLogger().log(Level.WARNING, "[" + plugin.getName() + "] Given type does not have any names. (types." + item + "." + type + ")");
+					Util.debug(Level.WARNING, "[" + plugin.getName() + "] Given type does not have any names. (types." + item + "." + type + ")");
 				}
 			}
 		}
 	}
 
-	public final void loadAliases(){
-		Set<String> list = items.getConfigurationSection("aliases").getKeys(false);
-		if(list == null){
-			plugin.getLogger().log(Level.INFO, "[" + plugin.getName() + "] There are no item aliases specified in the items.yml file?!");
-		}
+	public ArrayList<ItemID> getItemIDsByPart(String part) {
+		ArrayList<ItemID> iList = new ArrayList<ItemID>();
 
-		for(String item : list){
-			String itemIDString = items.getString("aliases." + item);
-			int itemID;
-			Integer dataType;
-			try{
-				if(itemIDString.matches("[0-9]+/[0-9]+")){
-					String[] splitted = itemIDString.split("/");
-					itemID = Integer.parseInt(splitted[0]);
-					dataType = Integer.parseInt(splitted[0]);
-				}else{
-					itemID = Integer.parseInt(itemIDString);
-					dataType = null;
-				}
+		Pattern p = Pattern.compile("^(.*?)" + part + "(.*?)$", Pattern.CASE_INSENSITIVE);
 
-				ItemID id;
-				if(this.isValidItem(itemID, dataType)){
-					id = new ItemID(itemID, dataType, item);
-				}else
-					id = new ItemID(itemID, null, item);
-
-				String name = item.toLowerCase().replaceAll(" ", "_");
-				itemsAliases.put(name, id);
-			}catch(NumberFormatException e){
-				plugin.getLogger().log(Level.WARNING, "[" + plugin.getName() + "] Invalid item id (" + itemIDString + ") detected for alias " + item + " in items.yml");
-				continue;
+		for(Map.Entry<String, ItemID> e : this.itemsByName.entrySet()) {
+			if(p.matcher(e.getKey()).matches()) {
+				// Item name matches search pattern
+				iList.add(e.getValue());
 			}
 		}
+
+		return iList;
 	}
 
-	public ItemID getItemIDByName(String item){
+	public ItemID getItemIDByName(String item) {
 		String name = item.toLowerCase().replaceAll(" ", "_");
 		if(this.itemsByName.containsKey(name))
 			return this.itemsByName.get(name);
@@ -170,14 +171,14 @@ public class Items{
 		return null;
 	}
 
-	public String getItemNameByID(int itemID){
+	public String getItemNameByID(int itemID) {
 		return this.getItemNameByID(itemID, null);
 	}
 
-	public String getItemNameByID(int itemID, Integer itemType){
+	public String getItemNameByID(int itemID, Integer itemType) {
 		ItemID key = new ItemID(itemID, itemType);
 
-		for(Map.Entry<ItemID, String> entry : itemsByID.entrySet()){
+		for(Map.Entry<ItemID, String> entry : itemsByID.entrySet()) {
 			ItemID item = entry.getKey();
 			if(item.equals(key))
 				return entry.getValue();
@@ -186,16 +187,16 @@ public class Items{
 		return null;
 	}
 
-	public boolean isValidItem(int itemID){
+	public boolean isValidItem(int itemID) {
 		return isValidItem(itemID, null);
 	}
 
-	public boolean isValidItem(int itemID, Integer itemType){
+	public boolean isValidItem(int itemID, Integer itemType) {
 		if(itemID < 0 || (itemType != null && itemType < 0))
 			return false;
 
 		Material mat = Material.getMaterial(itemID);
-		if(mat != null){
+		if(mat != null) {
 			if(itemType == null)
 				return true;
 
@@ -207,7 +208,7 @@ public class Items{
 		return false;
 	}
 
-	public Integer getMaxStackSize(int id){
+	public Integer getMaxStackSize(int id) {
 		return Material.getMaterial(id).getMaxStackSize();
 	}
 }

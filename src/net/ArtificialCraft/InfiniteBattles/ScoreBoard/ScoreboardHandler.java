@@ -29,7 +29,7 @@ public class ScoreboardHandler{
 
 	public static Scoreboard getNewScoreBoard(Battle b){
 		Scoreboard sb = manager.getNewScoreboard();
-		if(b.getType().equals(BattleType.Infection) || b.getType().equals(BattleType.Spleef) || b.getType().equals(BattleType.Duck_Hunt) || b.getType().equals(BattleType.Capture_The_Flag))
+		if(b.getType().equals(BattleType.PaintBall) || b.getType().equals(BattleType.Infection) || b.getType().equals(BattleType.Spleef) || b.getType().equals(BattleType.Duck_Hunt) || b.getType().equals(BattleType.Capture_The_Flag))
 			return sb;
 		Objective health = sb.registerNewObjective("Lives", "dummy");
 		health.setDisplaySlot(DisplaySlot.BELOW_NAME);

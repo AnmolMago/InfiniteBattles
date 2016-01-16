@@ -65,13 +65,13 @@ public class BattleCommand implements ICommand{
 				if(IBattle.isPlayerPlaying(p.getName()) != null){
 					return IError.alreadyInBattle;
 				}
-				Battle b = IBattle.getBattle(args[1]);
-				if(b != null){
+				if(args.length > 1 && IBattle.getBattle(args[1]) != null){
+					Battle b = IBattle.getBattle(args[1]);
 					if(b.isJoinable()){
 						if(b.addContestant(IBattle.getContestant(p.getName()))){
 							Util.msg(p, "You have been added to " + b.getName() + "!");
 						}else{
-							Util.error(p, "Error: Could not add you to battle!");
+							return "Error: Could not add you to battle!";
 						}
 					}else{
 						return "This battle has already started! Please type \"/spectate\" to watch!";
@@ -99,27 +99,19 @@ public class BattleCommand implements ICommand{
 					}
 					return "This battle is not running! " + running;
 				}
-			}else if(args[0].equalsIgnoreCase("arena")){
+			}else if(args[0].equalsIgnoreCase("leave")){
 				if(!(sender instanceof Player)){
-					return "You are not a player!";
-				}
-				if(args.length < 2){
-					return "Please type /ibattle arena create/cancel";
+					return IError.playerOnly;
 				}
 				Player p = (Player)sender;
-				String[] newSplit = new String[args.length - 1];
-				System.arraycopy(args, 1, newSplit, 0, args.length - 1);
-				if(newSplit[0].equalsIgnoreCase("create")){
-					ArenaHandler.create(p, newSplit, false);
+				Battle b = IBattle.isPlayerPlaying(p.getName());
+                if(b == null)
+                    b = IBattle.isPlayerSpectating(p.getName());
+				if(b != null && b.goHome(IBattle.getContestant(p.getName()))){
+					Util.msg(p, "You have been removed from the battle");
 				}else{
-					ArenaHandler.cancel(p);
+					Util.error(p, "You are not part of a battle!");
 				}
-			}else if(args[0].equalsIgnoreCase("set")){
-				if(!(sender instanceof Player)){
-					return "You are not a player!";
-				}
-				Player p = (Player)sender;
-				ArenaHandler.create(p, args, true);
 			}else if(args[0].equalsIgnoreCase("config")){
 				if(!sender.isOp())
 					return "You do not have permission to use this command!";
@@ -133,7 +125,7 @@ public class BattleCommand implements ICommand{
 					}else if(args[1].equalsIgnoreCase("set") && args.length > 2 && sender instanceof Player){
 						Player p = (Player) sender;
 						Location l = p.getLocation();
-						Util.broadcast(l + " | " + l.getX() + "|" + l.getY() + "|" + l.getZ());
+						Util.broadcastDebug(l + " | " + l.getX() + "|" + l.getY() + "|" + l.getZ());
 						if(args[2].equalsIgnoreCase("rolepicker")){
 							IBattle.setRolepicker(p.getLocation());
 							Config.getConfig().set("rolepicker", Formatter.configLoc(IBattle.getRolepicker()));
@@ -141,6 +133,8 @@ public class BattleCommand implements ICommand{
 							Util.msg(sender, "k done");
 						}else if(args[2].equalsIgnoreCase("invpicker")){
 							IBattle.setInvpicker(p.getLocation());
+							Config.getConfig().set("invpicker", Formatter.configLoc(IBattle.getRolepicker()));
+							Config.saveYamls();
 							Util.msg(sender, "k done");
 						}else if(args[2].equalsIgnoreCase("blueflag") || args[2].equalsIgnoreCase("redflag")){
 							byte color = args[2].equalsIgnoreCase("redflag") ? (byte)14 : (byte)11;
@@ -153,11 +147,16 @@ public class BattleCommand implements ICommand{
 						}
 					}
 				}else{
-					Util.error(sender, "not enough args bro");
+					return "not enough args bro";
 				}
 			}
 		}else{
-			IBattle.help(this);
+			Util.msg(sender, "InfiniteBattles is a one of a kind plugin that allows you to face your enemies in many different gamemodes.");
+			Util.msg(sender, "You can use the following commands:");
+			Util.msg(sender, ChatColor.DARK_AQUA + "     - \"/ibattle create {BattleType}\"");
+			Util.msg(sender, ChatColor.DARK_AQUA + "     - \"/join {Battle}\"");
+			Util.msg(sender, ChatColor.DARK_AQUA + "     - \"/spectate {Battle}\"");
+			Util.msg(sender, ChatColor.DARK_AQUA + "     - \"/status\"");
 		}
 		return null;
 	}

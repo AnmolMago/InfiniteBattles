@@ -95,9 +95,12 @@ public class Contestant{
 	}
 
 	public Player getPlayer(){
-		if(Bukkit.getPlayerExact(name) == null && IBattle.isPlayerPlaying(name) != null){
+		if(Bukkit.getPlayerExact(name) == null)
+			Util.debug("Player call for contestannt " + getName() + " returned null!");
+
+		if(Bukkit.getPlayerExact(name) == null && IBattle.isPlayerPlaying(name) != null)
 				IBattle.isPlayerPlaying(name).removeContestant(this);
-		}
+
 		return Bukkit.getPlayerExact(name);
 	}
 
@@ -110,9 +113,10 @@ public class Contestant{
 	}
 
 	public boolean teleport(Location l){
+		Util.debug(getName() + " | " + l);
 		if(l == null)
 			Util.debug("Location is null u biatch");
-		return getPlayer() != null && l != null && getPlayer().teleport(l);
+		return getPlayer() != null && !getPlayer().isDead() && l != null && getPlayer().teleport(l);
 	}
 
 	public String parseStreak(){

@@ -1,13 +1,6 @@
 package net.ArtificialCraft.InfiniteBattles.Entities.Arena;
 
 import net.ArtificialCraft.InfiniteBattles.Entities.Battles.BattleType;
-import net.ArtificialCraft.InfiniteBattles.IBattle;
-import net.ArtificialCraft.InfiniteBattles.Misc.Config;
-import net.ArtificialCraft.InfiniteBattles.Misc.Formatter;
-import net.ArtificialCraft.InfiniteBattles.Misc.Util;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,10 +15,8 @@ import java.util.Random;
 public class ArenaHandler{
 
 	private static HashMap<String, Arena> unusedArenas = new HashMap<String, Arena>();
-	static HashMap<String, String> status = new HashMap<String, String>();
-	static HashMap<String, HashMap<String, String>> creation = new HashMap<String, HashMap<String, String>>();
 
-	public static void create(Player p, String[] args, boolean set){
+	/*public static void createOld(Player p, String[] args, boolean set){
 		String pname = p.getName();
 		if(!set){
 			if(status.containsKey(pname)){
@@ -95,13 +86,13 @@ public class ArenaHandler{
 		}else{
 			Util.error(p, "You were not creating an arena!");
 		}
-	}
+	}  */
 	public static HashMap<String, Arena> getUnusedArenas(){
 		return unusedArenas;
 	}
 
 	public static void addUnusedArena(Arena a){
-		if(!isUnused(a))
+		if(!isUnused(a) && a != null)
 			unusedArenas.put(a.getName(), a);
 	}
 
@@ -118,9 +109,9 @@ public class ArenaHandler{
 
 	public static Arena getArenaFor(BattleType bt){
 		List<Arena> arenas = new ArrayList<Arena>();
-		if(bt.equals(BattleType.Spleef) || bt.equals(BattleType.Boat_Wars) || bt.equals(BattleType.Cars)){
+		if(bt.isUnique()){
 			for(String key : unusedArenas.keySet()){
-				if(unusedArenas.get(key).isUnique().equals(bt))
+				if(bt.equals(unusedArenas.get(key).isUnique()))
 					arenas.add(unusedArenas.get(key));
 			}
 		}else{

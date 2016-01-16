@@ -3,7 +3,6 @@ package net.ArtificialCraft.InfiniteBattles.Entities.Battles.BattleHandler;
 import net.ArtificialCraft.InfiniteBattles.Entities.Battles.Battle;
 import net.ArtificialCraft.InfiniteBattles.Entities.Contestant.Contestant;
 import net.ArtificialCraft.InfiniteBattles.IBattle;
-import net.ArtificialCraft.InfiniteBattles.Misc.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -67,18 +66,21 @@ public class DuckHunt extends IBattleHandler{
 						e.remove();
 				}
 				for(int i = 0; i < 5 * c; i++){
-					Location spawn = getBattle().getArena().getRandomSpawn();
+					Location spawn = getBattle().getArena().getRandomLocation();
 					chickens.add(spawn.getWorld().spawnEntity(spawn, EntityType.CHICKEN));
-					Util.broadcast("yolo " + c);
 				}
 				c++;
 			}
 		}, 300, 300);
 		final int id = bt.getTaskId();
-		Bukkit.getScheduler().runTaskLaterAsynchronously(IBattle.getPlugin(), new Runnable(){
+		Bukkit.getScheduler().runTaskLater(IBattle.getPlugin(), new Runnable(){
 			@Override
 			public void run(){
 				Bukkit.getScheduler().cancelTask(id);
+				if(!chickens.isEmpty()){
+					for(Entity e : chickens)
+						e.remove();
+				}
 				getBattle().end(highScore());
 			}
 		}, 2400);
@@ -87,9 +89,7 @@ public class DuckHunt extends IBattleHandler{
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onDamage(EntityDamageByEntityEvent e){
 		if(!isBattleEvent(e)){return;}
-		Util.broadcast("1");
 		if(e.getEntityType().equals(EntityType.CHICKEN) && e.getDamager().getType().equals(EntityType.ARROW)){
-			Util.broadcast("2");
 			Arrow a = (Arrow)e.getDamager();
 			Score s = sb.getObjective(DisplaySlot.SIDEBAR).getScore((Player) a.getShooter());
 			s.setScore(s.getScore() + 250);
@@ -97,6 +97,7 @@ public class DuckHunt extends IBattleHandler{
 		}else if(e.getEntityType().equals(EntityType.PLAYER)){
 			Player p = (Player)e.getEntity();
 			p.setHealth(p.getMaxHealth());
+			e.setCancelled(true);
 		}
 	}
 
@@ -104,8 +105,10 @@ public class DuckHunt extends IBattleHandler{
 		Contestant c = null;
 		int score = 0;
 		for(Contestant p : getBattle().getContestants()){
-			if(sb.getObjective(DisplaySlot.SIDEBAR).getScore(p.getPlayer()).getScore() > score)
+			if(sb.getObjective(DisplaySlot.SIDEBAR).getScore(p.getPlayer()).getScore() > score){
+				score = sb.getObjective(DisplaySlot.SIDEBAR).getScore(p.getPlayer()).getScore();
 				c = p;
+			}
 		}
 		return c;
 	}

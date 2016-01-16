@@ -11,7 +11,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
-import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
@@ -39,6 +38,7 @@ public class Spleef extends IBattleHandler{
 			if(p == null){continue;}
 			PlayerInventory inv = p.getInventory();
 			inv.clear();
+			inv.setArmorContents(new ItemStack[]{head, chest, legs, boots});
 			inv.addItem(new ItemStack(Material.DIAMOND_SPADE));
 			p.updateInventory();
 		}
@@ -50,7 +50,7 @@ public class Spleef extends IBattleHandler{
 		for(Contestant c : getBattle().getContestants()){
 			Player p = c.getPlayer();
 			if(p == null){continue;}
-			p.teleport(getBattle().getArena().getRandomSpawn());
+			p.teleport(getBattle().getArena().getRandomLocation());
 		}
 		getBattle().setStatus(Status.Started);
 	}
@@ -67,18 +67,16 @@ public class Spleef extends IBattleHandler{
 	public void onSnowBreak(BlockBreakEvent e){
 		if(!isBattleEvent(e)){return;}
 		if(e.getBlock().getType().equals(Material.SNOW_BLOCK)){
-			e.getBlock().getDrops().clear();
 			blocks.add(e.getBlock().getLocation());
+			e.setCancelled(true);
+			e.getBlock().setType(Material.AIR);
 		}else if(!e.getBlock().getType().equals(Material.SNOW)){
 			e.setCancelled(true);
 		}
 	}
 
-	@EventHandler
-	public void onDeath(PlayerDeathEvent e){
-		if(getBattle().getContestants().size() == 1){
-			for(Location l : blocks)
-				l.getBlock().setType(Material.SNOW_BLOCK);
-		}
+	public void restoreBlocks(){
+		for(Location l : blocks)
+			l.getBlock().setType(Material.SNOW_BLOCK);
 	}
 }

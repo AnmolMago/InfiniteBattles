@@ -1,12 +1,11 @@
 package net.ArtificialCraft.InfiniteBattles;
 
 import net.ArtificialCraft.InfiniteBattles.Commands.CommandManager;
-import net.ArtificialCraft.InfiniteBattles.Commands.ICommand;
-import net.ArtificialCraft.InfiniteBattles.Entities.Contestant.Contestant;
-import net.ArtificialCraft.InfiniteBattles.Entities.Arena.Arena;
 import net.ArtificialCraft.InfiniteBattles.Entities.Battles.Battle;
 import net.ArtificialCraft.InfiniteBattles.Entities.Battles.BattleHandler.*;
 import net.ArtificialCraft.InfiniteBattles.Entities.Battles.BattleType;
+import net.ArtificialCraft.InfiniteBattles.Entities.Contestant.Contestant;
+import net.ArtificialCraft.InfiniteBattles.Entities.QueueHandler;
 import net.ArtificialCraft.InfiniteBattles.Listeners.PlayerListener;
 import net.ArtificialCraft.InfiniteBattles.Listeners.SignListener;
 import net.ArtificialCraft.InfiniteBattles.Misc.Config;
@@ -15,26 +14,32 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import uk.co.tggl.pluckerpluck.multiinv.MultiInv;
 import uk.co.tggl.pluckerpluck.multiinv.MultiInvAPI;
 
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Enclosed in project InfiniteBattles for Aurora Enterprise.
  * Author: Josh Aurora
  * Date: 2013-04-27
  */
-public class IBattle extends JavaPlugin{
+public class IBattle extends JavaPlugin implements Listener {
 
 	private static IBattle plugin;
 	private static MultiInvAPI miapi;
 	private static Location rolepicker, invpicker;
 
-	private static HashMap<String, Arena> arenas = new HashMap<String, Arena>();
-	private static HashMap<String, Battle> currentBattles = new HashMap<String, Battle>();
+	private static ConcurrentHashMap<String, Battle> currentBattles = new ConcurrentHashMap<String, Battle>();
 	private static HashMap<String, Contestant> contestants = new HashMap<String, Contestant>();
+    public static HashMap<String, Location> workaround = new HashMap<String, Location>();
 
 	public IBattle(){
 		plugin = this;
@@ -57,7 +62,8 @@ public class IBattle extends JavaPlugin{
 		Config.loadContestants();
 
 		Bukkit.getPluginManager().registerEvents(new PlayerListener(), this);
-		Bukkit.getPluginManager().registerEvents(new SignListener(), this);
+        Bukkit.getPluginManager().registerEvents(new SignListener(), this);
+        Bukkit.getPluginManager().registerEvents(this, this);
 
 		miapi = new MultiInvAPI((MultiInv)getServer().getPluginManager().getPlugin("MultiInv"));
 
@@ -73,38 +79,32 @@ public class IBattle extends JavaPlugin{
 		return true;
 	}
 
-	public static void help(ICommand cmd){
-
-	}
-
-	public static Arena getArena(String s){
-		return arenas.get(s);
-	}
-
-	public static void addArena(Arena s){
-		arenas.put(s.getName(), s);
-	}
-
 	public static void addBattle(Battle b){
-		if(!currentBattles.containsKey(b.getName()))
+		if(!currentBattles.containsKey(b.getName().toLowerCase()))
 			currentBattles.put(b.getName().toLowerCase(), b);
 	}
 
 	public static void endBattle(Battle b){
-		if(currentBattles.containsKey(b.getName().toLowerCase()))
+		if(currentBattles.containsKey(b.getName().toLowerCase())){
 			currentBattles.remove(b.getName().toLowerCase());
+
+			if(QueueHandler.getQueue().peek() != null){
+				Battle newB = QueueHandler.getQueue().poll();
+				String name = IBattle.getCurrentBattles().containsKey("battle1") ? "Battle2" : "Battle1";
+				newB.setName(name);
+				IBattle.startBattle(newB);
+			}
+		}
 	}
 
 	public static Battle getBattle(String s){
+		if(!currentBattles.containsKey(s.toLowerCase()))
+			return null;
 		return currentBattles.get(s.toLowerCase());
 	}
 
-	public static HashMap<String, Battle> getCurrentBattles(){
+	public static ConcurrentHashMap<String, Battle> getCurrentBattles(){
 		return currentBattles;
-	}
-
-	public static HashMap<String, Arena> getArenas(){
-		return arenas;
 	}
 
 	public static void addContestant(Contestant c){
@@ -116,7 +116,7 @@ public class IBattle extends JavaPlugin{
 	}
 
 	public static Contestant getContestant(String s){
-		if(!contestants.containsKey(s.toLowerCase()))
+		if(!contestants.containsKey(s.toLowerCase()) && Bukkit.getPlayerExact(s) != null)
 			contestants.put(s.toLowerCase(), new Contestant(Bukkit.getPlayerExact(s)));
 
 		return contestants.get(s.toLowerCase());
@@ -128,12 +128,8 @@ public class IBattle extends JavaPlugin{
 
 	public static IBattleHandler getBattleHandler(BattleType bt, Battle b){
 		switch(bt){
-			case Boat_Wars:
-				return new Boat(b);
 			case Capture_The_Flag:
 				return new CaptureTheFlag(b);
-			case Cars:
-				return new Cars(b);
 			case Duck_Hunt:
 				return new DuckHunt(b);
 			case Infection:
@@ -153,32 +149,43 @@ public class IBattle extends JavaPlugin{
 
 	public static Battle isPlayerPlaying(String p){
 		if(currentBattles.get("battle1") != null && currentBattles.get("battle1").hasContestant(contestants.get(p.toLowerCase()))){
-			Util.debug("1");
 			return currentBattles.get("battle1");
 		}else if(currentBattles.get("battle2") != null && currentBattles.get("battle2").hasContestant(contestants.get(p.toLowerCase()))){
-			Util.debug("2");
 			return currentBattles.get("battle2");
 		}
 		return null;
 	}
 
+    public static Battle isPlayerSpectating(String p){
+        if(currentBattles.get("battle1") != null && currentBattles.get("battle1").hasSpectator(contestants.get(p.toLowerCase()))){
+            return currentBattles.get("battle1");
+        }else if(currentBattles.get("battle2") != null && currentBattles.get("battle2").hasSpectator(contestants.get(p.toLowerCase()))){
+            return currentBattles.get("battle2");
+        }
+        return null;
+    }
+
 	public static void startBattle(Battle b){
 		final String name = b.getName();
 		b.startAcceptingContestants();
-		if(Bukkit.getPlayer(b.getCreator()) != null)
-			b.addContestant(IBattle.getContestant(b.getCreator()));
+		if(Bukkit.getPlayer(b.getCreator()) != null){
+			if(isPlayerPlaying(b.getCreator()) == null){
+				b.addContestant(IBattle.getContestant(b.getCreator()));
+			}
+		}
 		addBattle(b);
-		Bukkit.getScheduler().runTaskLaterAsynchronously(IBattle.getPlugin(), new Runnable(){
+		Bukkit.getScheduler().runTaskLater(IBattle.getPlugin(), new Runnable(){
 			public void run(){
 				Battle b = IBattle.getBattle(name);
+				if(b == null)
+					return;
 				if(b.getContestants().size() > 1){
 					b.setUp();
 				}else{
-					Util.broadcast(b.getContestants().size() + "");
 					b.end("there were not enough players");
 				}
 			}
-		}, 200);
+		}, 400);
 	}
 
 	public static MultiInvAPI getMiAPI(){
@@ -197,4 +204,40 @@ public class IBattle extends JavaPlugin{
 	public static void setInvpicker(Location ip){
 		invpicker = ip;
 	}
+
+    @EventHandler
+    public void onSurvivalEnter(PlayerChangedWorldEvent e){
+        if(e.getPlayer().getWorld().getName().startsWith("Survival") && workaround.containsKey(e.getPlayer().getName())){
+            final Location loc = workaround.get(e.getPlayer().getName());
+	        final String name = e.getPlayer().getName();
+	        Util.debug("change: " + e.getPlayer().getName() + " | " + loc);
+            if(loc != null){
+	            Bukkit.getScheduler().runTaskLater(this, new Runnable(){
+		            @Override
+		            public void run(){
+			            if(Bukkit.getPlayer(name) != null)
+			                Bukkit.getPlayer(name).teleport(loc);
+			            Util.debug("IBteleported: " + name);
+		            }
+	            }, 100);
+            }
+            workaround.remove(e.getPlayer().getName());
+        }
+    }
+
+    @EventHandler
+    public void onRespawn(PlayerRespawnEvent e){
+        if(workaround.containsKey(e.getPlayer().getName())){
+            final String name = e.getPlayer().getName();
+            Bukkit.getScheduler().runTaskLater(this, new Runnable() {
+                @Override
+                public void run() {
+                    Player p = Bukkit.getPlayerExact(name);
+                    if(p != null)
+                        p.chat("/mvtp survival");
+                }
+            }, 100);
+        }
+    }
+
 }

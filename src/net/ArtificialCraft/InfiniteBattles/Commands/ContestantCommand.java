@@ -1,11 +1,12 @@
 package net.ArtificialCraft.InfiniteBattles.Commands;
 
 import net.ArtificialCraft.InfiniteBattles.Collections.IError;
-import net.ArtificialCraft.InfiniteBattles.Entities.Contestant.Contestant;
 import net.ArtificialCraft.InfiniteBattles.Entities.Battles.BattleType;
+import net.ArtificialCraft.InfiniteBattles.Entities.Contestant.Contestant;
 import net.ArtificialCraft.InfiniteBattles.IBattle;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 
 /**
@@ -22,10 +23,16 @@ public class ContestantCommand implements ICommand{
 		}else{
 			name = sender.getName().toLowerCase();
 		}
-		Contestant c = IBattle.getContestant(Bukkit.getOfflinePlayer(name).getName());
-		if(c == null)
+		OfflinePlayer op;
+		if(Bukkit.getPlayer(name) != null){
+			op = Bukkit.getPlayer(name);
+		}else{
+			op = Bukkit.getOfflinePlayer(name);
+		}
+		if(!op.hasPlayedBefore())
 			return IError.invalidContestant;
-		sender.sendMessage(ChatColor.DARK_GREEN + "Statistics:");
+		Contestant c = IBattle.getContestant(op.getName());
+		sender.sendMessage(ChatColor.DARK_GREEN + "Statistics for " + ChatColor.DARK_RED + op.getName() + ChatColor.DARK_GREEN + ":");
 		sender.sendMessage(ChatColor.DARK_RED + "     Wins: " + ChatColor.BLUE + c.getWins() + ChatColor.DARK_GREEN
 				+ "     |     " + ChatColor.DARK_RED + "Losses: " + ChatColor.BLUE + c.getLosses() + ChatColor.DARK_GREEN
 				+ "     |     " + ChatColor.DARK_RED + "Streak: " + ChatColor.BLUE + c.parseStreak());

@@ -41,7 +41,7 @@ public class Util{
 	}
 
 	public static void debug(String s){
-		Bukkit.getLogger().log(Level.SEVERE, "[IBattle] " + s);
+		debug(Level.SEVERE, "[IBattle] " + s);
 	}
 
 	public static void debug(Level l, String s){
